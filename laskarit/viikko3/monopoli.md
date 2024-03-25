@@ -1,5 +1,3 @@
-# Tehtävä 1: Monopoli-pelin luokkakaavio
-
 ```mermaid
 classDiagram
     Monopolipeli "1" -- "2" Noppa
