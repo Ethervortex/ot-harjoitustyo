@@ -16,3 +16,35 @@ Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 - [Vaatimusmäärittely](./dokumentaatio/vaatimusmaarittely.md)
 - [Työaikakirjanpito](./dokumentaatio/tuntikirjanpito.md)
 - [Changelog](./dokumentaatio/changelog.md)
+
+## Asentaminen
+
+Asenna riippuvuudet komennolla:
+
+```bash
+poetry install
+```
+
+## Ohjelman suorittaminen
+
+Käynnistä sovellus komennolla:
+
+```bash
+poetry run invoke start
+```
+
+## Testaus
+
+Ohjelman testit suoritetaan komennolla:
+
+```bash
+poetry run invoke test
+```
+
+## Testikattavuus
+
+Testikattavuusraportin voi luoda komennolla:
+
+```bash
+poetry run invoke coverage-report
+```
