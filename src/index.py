@@ -1,10 +1,10 @@
 from tkinter import Tk
-from ui import calcUI
+from ui import CalcUI
 
 def main():
     window = Tk()
     window.title("SciCalc")
-    ui = calcUI(window)
+    ui = CalcUI(window)
     ui.start()
     window.mainloop()
 

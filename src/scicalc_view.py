@@ -1,11 +1,11 @@
-from tkinter import ttk, constants, StringVar, font
+from tkinter import ttk, constants
 
 class SciCalcView:
 
-    def __init__(self, root):
+    def __init__(self, root, controller):
         self._root = root
+        self._controller = controller
         self._frame = None
-        self._expression = None
         self._initialize()
 
     def pack(self):
@@ -16,8 +16,7 @@ class SciCalcView:
 
     def _initialize(self):
         self._frame = ttk.Frame(master=self._root)
-        self._expression = StringVar()
-        entry_field = ttk.Entry(self._frame, textvariable=self._expression, justify=constants.RIGHT, font=('Helvetica', 14))
+        entry_field = ttk.Entry(self._frame, textvariable=self._controller.equation, justify=constants.RIGHT, font=('Helvetica', 14))
         entry_field.grid(row=0, column=0, columnspan=4, pady=10, ipady=15, sticky=constants.EW)
 
         buttons = [
@@ -33,7 +32,7 @@ class SciCalcView:
 
         row_num, col_num = 1, 0
         for button_text in buttons:
-            button = ttk.Button(self._frame, text=button_text, style="Calc.TButton", width=5)
+            button = ttk.Button(self._frame, text=button_text, style="Calc.TButton", width=5, command=lambda text=button_text: self._controller.press(text))
             button.grid(row=row_num, column=col_num, padx=5, pady=5, sticky=constants.NSEW)
             col_num += 1
             if col_num > 3:
