@@ -12,3 +12,4 @@
 - Lisätty luokka SciCalcController, joka huolehtii sovelluslogiikasta
 - Nappien painaminen hiirellä tulostaa merkin laskimen näytölle
 - Laskin osaa laskea peruslaskutoimitukset
+- Toteutettu muutama unittest ja invoke tehtävät
