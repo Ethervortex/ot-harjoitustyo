@@ -20,3 +20,7 @@ def coverage_report(ctx):
     ctx.run("coverage html", pty=True)
     if platform != "win32":
         call(("xdg-open", "htmlcov/index.html"))
+
+@task
+def lint(ctx):
+    ctx.run("pylint src", pty=True)

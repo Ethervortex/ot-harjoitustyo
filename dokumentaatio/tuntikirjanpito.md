@@ -7,4 +7,5 @@
 | 26.3. | 6    | käyttöliittymän suunnittelu ja toteutuksen aloitus |
 | 27.3. | 6    | käyttöliittymän ohjelmointia |
 | 28.3. | 2    | toteutettu muutama testi ja coverage-report kuntoon |
-| **Yht.** | **20** | |
+| 1.4 . | 3    | käyttöliittymän toteutusta |
+| **Yht.** | **23** | |

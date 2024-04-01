@@ -13,3 +13,6 @@
 - Nappien painaminen hiirellä tulostaa merkin laskimen näytölle
 - Laskin osaa laskea peruslaskutoimitukset
 - Toteutettu muutama unittest ja invoke tehtävät
+
+## Viikko 4
+

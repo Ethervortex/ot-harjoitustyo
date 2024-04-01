@@ -10,6 +10,7 @@ Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 
 ## Dokumentaatio
 - [Vaatimusmäärittely](./dokumentaatio/vaatimusmaarittely.md)
+- [Arkkitehtuurikuvaus](./dokumentaatio/arkkitehtuuri.md)
 - [Työaikakirjanpito](./dokumentaatio/tuntikirjanpito.md)
 - [Changelog](./dokumentaatio/changelog.md)
 
