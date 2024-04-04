@@ -1,4 +1,4 @@
-from tkinter import ttk, constants
+from tkinter import ttk, constants, Text, Scrollbar
 
 class SciCalcView:
 
@@ -10,9 +10,9 @@ class SciCalcView:
             'rad', 'deg', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
             'sin', 'cos', 'tan', '\u03c0', '(', ')', '\u00b1', '÷',
             'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9', 'e', '7', '8', '9', '×',
-            'x\u00b2', 'x\u02B8', '\u221ax', '\u00b3\u221ax', '4', '5', '6', '-',
+            'x\u00b2', 'x\u02B8', '\u221ax', '\u230Ax\u230B', '4', '5', '6', '-',
             'log', 'ln', '10\u02E3', 'e\u02E3', '1', '2', '3', '+',
-            'x!', '%', 'mod', 'abs', '0', '.', '=', 
+            'x!', 'mod', 'abs', 'a/b', '0', '.', '=',
         ]
         self._add_styles()
         self._add_widgets()
@@ -43,6 +43,9 @@ class SciCalcView:
             justify=constants.RIGHT,
             font=('Arial', 18)
         )
+        self._entry_field.focus_set()
+        self._cursor_visible = True
+        self._entry_field.icursor("")
         self._add_buttons()
 
     def _add_buttons(self):
@@ -61,7 +64,7 @@ class SciCalcView:
                 text=button_text,
                 style=button_style,
                 width=5,
-                command=lambda text=button_text: self._controller.press(text)
+                command=lambda text=button_text: self._button_press(text)
             )
             self._buttons_widgets.append(button)
 
@@ -80,3 +83,9 @@ class SciCalcView:
             if col_num > 7:
                 col_num = 0
                 row_num += 1
+
+    def _button_press(self, button_text):
+        self._controller.press(button_text)
+        self._entry_field.focus_set()
+        cursor_position = len(self._entry_field.get())
+        self._entry_field.icursor(cursor_position)
