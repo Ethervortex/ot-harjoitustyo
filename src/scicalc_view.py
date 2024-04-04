@@ -7,13 +7,16 @@ class SciCalcView:
         self._controller = controller
         self._frame = None
         self._buttons = [
+            'rad', 'deg', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
             'sin', 'cos', 'tan', '\u03c0', '(', ')', '\u00b1', '÷',
             'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9', 'e', '7', '8', '9', '×',
             'x\u00b2', 'x\u02B8', '\u221ax', '\u00b3\u221ax', '4', '5', '6', '-',
             'log', 'ln', '10\u02E3', 'e\u02E3', '1', '2', '3', '+',
-            'x!', 'nCr', 'mod', 'abs', '0', '.', '=', 
+            'x!', '%', 'mod', 'abs', '0', '.', '=', 
         ]
-        self._initialize()
+        self._add_styles()
+        self._add_widgets()
+        self._arrange_widgets()
 
     def pack(self):
         self._frame.pack(fill=constants.X)
@@ -21,19 +24,16 @@ class SciCalcView:
     def destroy(self):
         self._frame.destroy()
 
-    def _initialize(self):
-        self._add_styles()
-        self._add_widgets()
-        self._arrange_widgets()
-
     def _add_styles(self):
         style = ttk.Style()
         style.theme_use('alt')
         style.configure("MainFrame.TFrame", background='lightgrey')
-        style.configure("Calc.TButton", font=('Montserrat', 15, 'bold'), background='lightgrey', padding=(5, 5))
-        style.configure("Number.TButton", font=('Montserrat', 16, 'bold'), background='darkgrey')
-        style.configure("BasicOperation.TButton", font=('Montserrat', 16, 'bold'), background='lightgreen')
-        style.configure("Equal.TButton", font=('Montserrat', 16, 'bold'), background='#606060')
+        style.configure("Calc.TButton", font=('Segoe UI', 15, 'bold'), background='lightgrey', padding=(5, 5))
+        style.configure("Number.TButton", font=('Segoe UI', 16, 'bold'), background='darkgrey')
+        style.configure("BasicOperation.TButton", font=('Segoe UI', 16, 'bold'), background='lightgreen')
+        style.configure("Equal.TButton", font=('Segoe UI', 16, 'bold'), background='#606060')
+        style.configure("Clear.TButton", font=('Segoe UI', 15, 'bold'), background='red')
+        style.configure("Backspace.TButton", font=('Segoe UI', 15, 'bold'), background='orange')
 
     def _add_widgets(self):
         self._frame = ttk.Frame(master=self._root, style="MainFrame.TFrame")
@@ -41,7 +41,7 @@ class SciCalcView:
             self._frame,
             textvariable=self._controller.equation,
             justify=constants.RIGHT,
-            font=('Montserrat', 16)
+            font=('Arial', 18)
         )
         self._add_buttons()
 
@@ -52,6 +52,8 @@ class SciCalcView:
                 "Number.TButton" if button_text.isdigit() or button_text in ['.', '(', ')', '\u00b1']
                 else "BasicOperation.TButton" if button_text in ['+', '-', '×', '÷']
                 else "Equal.TButton" if button_text == '='
+                else "Clear.TButton" if button_text == 'C'
+                else "Backspace.TButton" if button_text == '\u232b'
                 else "Calc.TButton"
             )
             button = ttk.Button(

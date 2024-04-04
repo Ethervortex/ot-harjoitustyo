@@ -8,4 +8,5 @@
 | 27.3. | 6    | käyttöliittymän ohjelmointia |
 | 28.3. | 2    | toteutettu muutama testi ja coverage-report kuntoon |
 | 1.4 . | 3    | käyttöliittymän toteutusta |
+| 4.4 . | x    | x |
 | **Yht.** | **23** | |
