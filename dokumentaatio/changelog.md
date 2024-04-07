@@ -15,4 +15,5 @@
 - Toteutettu muutama unittest ja invoke tehtävät
 
 ## Viikko 4
-- x
+- Laskimen käyttöliittymä laajennettu näyttämään napit myös funktioille
+- Suurin osa funktioiden laskutoiminnoista toteutettu

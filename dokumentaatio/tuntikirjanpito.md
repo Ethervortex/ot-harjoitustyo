@@ -9,5 +9,6 @@
 | 28.3. | 2    | toteutettu muutama testi ja coverage-report kuntoon |
 | 1.4.  | 3    | käyttöliittymän toteutusta |
 | 4.4.  | 8    | kontrollilogiikan toteutusta |
-| x | x    | x |
-| **Yht.** | **31** | |
+| 7.4.  | 7    | lisää laskuoperaatioita |
+
+| **Yht.** | **38** | |

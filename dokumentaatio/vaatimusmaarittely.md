@@ -18,10 +18,10 @@ Sovellus tarjoaa seuraavan tyyppisen näkymän laskutoimitusten suorittamiseen
 
 - Käyttäjä voi syöttää laskutoimitukset graafisessa käyttöliittymässä hiirellä - tehty
 - Peruslaskutoimitukset (/, *, -, +) - tehty
-- Funktiolaskut (trigonometria, logaritmit, potenssit...) - kesken
-- Peruslaskutoimitukset onnistuvat myös näppäimistöllä ilman hiirtä
+- Funktiolaskut (trigonometria, logaritmit, potenssit...) - tehty
+- Peruslaskutoimitukset onnistuvat myös näppäimistöllä ilman hiirtä - kesken
 - Käyttäjä voi peruuttaa laskutoimituksissa taaksepän ja siirtyä eteenpäin
-- Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina
+- Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina - kesken
 - Suoritetut laskut kertyvät yläosassa olevalle näyttöalueelle
 - Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä
 

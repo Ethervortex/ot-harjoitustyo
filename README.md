@@ -45,3 +45,11 @@ Testikattavuusraportin voi luoda komennolla:
 ```bash
 poetry run invoke coverage-report
 ```
+
+## Pylint
+
+Koodin laatutarkistukset suoritetaan komennolla:
+
+```bash
+poetry run invoke lint
+```
