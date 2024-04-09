@@ -4,6 +4,7 @@ from math import (
     asin, acos, atan, radians, degrees
 )
 from fractions import Fraction
+from scicalc_db import SciCalcDatabase
 
 class SciCalcController:
     def __init__(self, view):
@@ -13,6 +14,7 @@ class SciCalcController:
         self.result_available = False
         self.radians = True
         self.previous_equations = []
+        self.database = SciCalcDatabase()
 
     def press(self, button_text):
         if button_text == '=':
@@ -119,16 +121,25 @@ class SciCalcController:
             if last_space == -1:
                 new_equation = current_equation[:-1]
             else:
-                new_equation = current_equation[:last_space]
+                print('length:', len(current_equation)-1, 'last_space:', last_space)
+                if last_space == len(current_equation)-1:
+                    new_equation = current_equation[:-2]
+                else:
+                    new_equation = current_equation[:-1]
             self.equation.set(new_equation)
         else:
             self.equation.set('')
 
     def _move_cursor(self, button_text):
+        current_equation = self.equation.get()
+        cursor_position = len(current_equation)
         if button_text == '\u2bc7':
-            pass
+            cursor_position = max(0, cursor_position - 1)
         else:
-            pass
+            cursor_position = min(len(current_equation), cursor_position + 1)
+
+        self.equation.set(current_equation)
+        self.view.move_cursor(cursor_position)
 
     def _basic_operations(self, button_text):
         if button_text in {'\u00d7', '\u00F7'}:

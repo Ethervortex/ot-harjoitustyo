@@ -14,12 +14,90 @@ class TestSciCalc(unittest.TestCase):
 
     def test_multiply_press(self):
         self.ui._controller.press('\u00d7')
-        self.assertEqual(self.ui._controller.equation_string, ' * ')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' * ')
 
     def test_divide_press(self):
         self.ui._controller.press('\u00F7')
-        self.assertEqual(self.ui._controller.equation_string, ' / ')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' / ')
+
+    def test_plus_press(self):
+        self.ui._controller.press('+')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' + ')
+
+    def test_minus_press(self):
+        self.ui._controller.press('-')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' - ')
 
     def test_digit_press(self):
         self.ui._controller.press('5')
-        self.assertEqual(self.ui._controller.equation_string, '5')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '5')
+
+    def test_errors(self):
+        self.ui._controller.press('=')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'No expression to evaluate')
+        self.ui._controller.equation.set('7 + (')
+        self.ui._controller.press('=')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'Syntax error')
+        self.ui._controller.equation.set('1 / 0')
+        self.ui._controller.press('=')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'Division by zero error')
+        self.ui._controller.equation.set('cov(0.5)')
+        self.ui._controller.press('=')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'Argument error')
+
+    def test_evaluate(self):
+        self.ui._controller.equation.set('5 * (1 + 2)')
+        self.ui._controller.press('=')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '15')
+
+    def test_clear(self):
+        self.ui._controller.press('C')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '')
+
+    def test_backspace(self):
+        self.ui._controller.equation.set('5 * (1 + 2)')
+        self.ui._controller.press('\u232b')
+        self.ui._controller.press('\u232b')
+        self.ui._controller.press('\u232b')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '5 * (1 ')
+        self.ui._controller.equation.set('6')
+        self.ui._controller.press('\u232b')
+        self.ui._controller.press('\u232b')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '')
+
+    def test_angle_units(self):
+        self.ui._controller.press('radians')
+        units = self.ui._controller.radians
+        self.assertEqual(units, False)
+
+    def test_negate(self):
+        self.ui._controller.equation.set('10')
+        self.ui._controller.press('\u00b1')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '-10')
+        self.ui._controller.equation.set('5 + 6')
+        self.ui._controller.press('\u00b1')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '5 + -6')
+
+    def test_constants(self):
+        self.ui._controller.press('e')
+        equation = self.ui._controller.equation.get()
+        self.assertAlmostEqual(float(equation), 2.718, places=3)
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('\u03c0')
+        equation = self.ui._controller.equation.get()
+        self.assertAlmostEqual(float(equation), 3.14159, places=5)

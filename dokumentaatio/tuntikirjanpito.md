@@ -10,5 +10,5 @@
 | 1.4.  | 3    | käyttöliittymän toteutusta |
 | 4.4.  | 8    | kontrollilogiikan toteutusta |
 | 7.4.  | 7    | lisää laskuoperaatioita |
-
-| **Yht.** | **38** | |
+| 9.4.  | 3    | lisää testejä, database, luokkakaavio |
+| **Yht.** | **41** | |

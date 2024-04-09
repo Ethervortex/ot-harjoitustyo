@@ -4,4 +4,15 @@
 
 Alustava luokkakaavio:
 
-![Luokkakaavio](./kuvat/x.png)
+```mermaid
+classDiagram
+    class CalcUI
+    class SciCalcView
+    class SciCalcController
+    class SciCalcDatabase
+
+    CalcUI --|> SciCalcView
+    CalcUI --|> SciCalcController
+    SciCalcView --|> SciCalcController
+    SciCalcController --|> SciCalcDatabase
+```

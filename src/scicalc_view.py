@@ -46,6 +46,9 @@ class SciCalcView:
                     button.state(['!pressed'])
                     self._controller.radians = True
 
+    def move_cursor(self, position):
+        self._entry_field.icursor(position)
+
     def _add_styles(self):
         style = ttk.Style()
         style.theme_use('alt')

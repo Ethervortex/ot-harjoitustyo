@@ -17,3 +17,6 @@
 ## Viikko 4
 - Laskimen käyttöliittymä laajennettu näyttämään napit myös funktioille
 - Suurin osa funktioiden laskutoiminnoista toteutettu
+- Toteutettu vastauksen muunnos murtoluvuksi
+- Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina
+- Toteutettu lisää testejä, pylint ja luokkakaavio
