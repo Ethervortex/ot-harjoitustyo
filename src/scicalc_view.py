@@ -46,8 +46,12 @@ class SciCalcView:
                     button.state(['!pressed'])
                     self._controller.radians = True
 
-    def move_cursor(self, position):
-        self._entry_field.icursor(position)
+    def get_cursor_position(self):
+        return self._entry_field.index(constants.INSERT)
+
+    def move_cursor(self, move):
+        new_cursor_position = self._entry_field.index(constants.INSERT) + move
+        self._entry_field.icursor(new_cursor_position)
 
     def _add_styles(self):
         style = ttk.Style()
@@ -125,5 +129,5 @@ class SciCalcView:
     def _button_press(self, button_text):
         self._controller.press(button_text)
         self._entry_field.focus_set()
-        cursor_position = len(self._entry_field.get())
-        self._entry_field.icursor(cursor_position)
+        #cursor_position = len(self._entry_field.get())
+        #self._entry_field.icursor(cursor_position)

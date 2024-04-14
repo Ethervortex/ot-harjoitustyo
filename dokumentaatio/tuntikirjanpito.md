@@ -11,4 +11,5 @@
 | 4.4.  | 8    | kontrollilogiikan toteutusta |
 | 7.4.  | 7    | lisää laskuoperaatioita |
 | 9.4.  | 3    | lisää testejä, database, luokkakaavio |
-| **Yht.** | **41** | |
+| 14.4. | 6    | kursorin liikuttaminen ja lisääminen kaavan väliin |
+| **Yht.** | **47** | |

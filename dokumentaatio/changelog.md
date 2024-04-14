@@ -20,3 +20,7 @@
 - Toteutettu vastauksen muunnos murtoluvuksi
 - Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina
 - Toteutettu lisää testejä, pylint ja luokkakaavio
+
+## Viikko 5
+- Loppujen funktiolaskujen toteutus
+- Kursori

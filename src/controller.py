@@ -10,57 +10,57 @@ class SciCalcController:
     def __init__(self, view):
         self.view = view
         self.equation = StringVar(value='')
-        #self.equation_string = ''
         self.result_available = False
         self.radians = True
         self.previous_equations = []
         self.database = SciCalcDatabase()
 
     def press(self, button_text):
-        if button_text == '=':
-            self._evaluate()
-        elif button_text == 'C':
-            self._clear()
-        elif button_text in {'radians', 'degrees'}:
-            self._angle_units()
-        elif button_text == '\u232b':
-            self._backspace()
-        elif button_text in {'\u2bc7', '\u2bc8'}:
-            self._move_cursor(button_text)
-        elif button_text in {'+', '-', '\u00d7', '\u00F7', '.', '(', ')'} or button_text.isdigit():
-            self._basic_operations(button_text)
-        elif button_text == '\u00b1':
-            self._negate()
-        elif button_text in {'\u03c0', 'e'}:
-            self._constants(button_text)
-        elif button_text in {
-            'sin', 'cos', 'tan', 'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9'
-        }:
-            self._trigonometry(button_text)
-        elif button_text in {'x\u00b2', 'x\u02B8', '10\u02E3', 'e\u02E3'}:
-            self._exponents(button_text)
-        elif button_text == '\u221ax':
-            self._roots(button_text)
-        elif button_text in {'log', 'ln'}:
-            self._logarithms(button_text)
-        elif button_text == 'x!':
-            self._factorials()
-        elif button_text == 'mod':
-            self._modulus()
-        elif button_text == 'abs':
-            self._absolute(button_text)
-        elif button_text == '\u230Ax\u230B':
-            self._floor()
-        elif button_text == 'a/b':
-            self._fractions()
-        else:
-            pass
+        button_functions = {
+            '=': self._evaluate,
+            'C': self._clear,
+            'radians': self._angle_units,
+            '\u232b': self._backspace,
+            '\u2bc7': lambda: self._move_cursor('\u2bc7'),
+            '\u2bc8': lambda: self._move_cursor('\u2bc8'),
+            '+': lambda: self._basic_operations('+'),
+            '-': lambda: self._basic_operations('-'),
+            '\u00d7': lambda: self._basic_operations('\u00d7'),
+            '\u00F7': lambda: self._basic_operations('\u00F7'),
+            '.': lambda: self._basic_operations('.'),
+            '(': lambda: self._basic_operations('('),
+            ')': lambda: self._basic_operations(')'),
+            '\u00b1': self._negate,
+            '\u03c0': lambda: self._constants('\u03c0'),
+            'e': lambda: self._constants('e'),
+            'sin': lambda: self._trigonometry('sin'),
+            'cos': lambda: self._trigonometry('cos'),
+            'tan': lambda: self._trigonometry('tan'),
+            'sin\u207B\u00B9': lambda: self._trigonometry('sin\u207B\u00B9'),
+            'cos\u207B\u00B9': lambda: self._trigonometry('cos\u207B\u00B9'),
+            'tan\u207B\u00B9': lambda: self._trigonometry('tan\u207B\u00B9'),
+            'x\u00b2': lambda: self._exponents('x\u00b2'),
+            'x\u02B8': lambda: self._exponents('x\u02B8'),
+            '10\u02E3': lambda: self._exponents('10\u02E3'),
+            'e\u02E3': lambda: self._exponents('e\u02E3'),
+            '\u221ax': lambda: self._roots('\u221ax'),
+            '\u230Ax\u230B': self._floor,
+            'log': lambda: self._logarithms('log'),
+            'ln': lambda: self._logarithms('ln'),
+            'x!': self._factorials,
+            'mod': self._modulus,
+            'abs': lambda: self._absolute('abs'),
+            'a/b': self._fractions,
+            '\u21b6': lambda: self._undo_redo('undo'),
+            '\u21b7': lambda: self._undo_redo('redo'),
+            **{str(i): lambda digit=i: self._basic_operations(str(digit)) for i in range(10)}
+        }
+        button_functions[button_text]()
 
     def _handle_error(self, error_message):
         self.equation.set(error_message)
         self.result_available = False
         self.view.update_button_state()
-        #self.equation_string = ''
 
     def _evaluate(self):
         print('equation_string:', self.equation.get())
@@ -74,13 +74,11 @@ class SciCalcController:
             self.previous_equations.append((self.equation.get(), result))
             self.equation.set(result)
             print('Previous equations:', self.previous_equations)
-            #self.equation_string = str(result)
-        except SyntaxError:
-            self._handle_error("Syntax error")
-        except ZeroDivisionError:
-            self._handle_error("Division by zero error")
-        except NameError:
-            self._handle_error("Argument error")
+            self.view.move_cursor(len(str(result)) - self.view.get_cursor_position())
+        except (SyntaxError, ValueError, ZeroDivisionError, NameError, TypeError) as e:
+            self._handle_error(f"Error: {e}")
+        except Exception as e:
+            self._handle_error("An unexpected error occurred")
 
     def _safe_eval(self, equation):
         safe_functions = {
@@ -106,10 +104,8 @@ class SciCalcController:
         self.equation.set('')
         self.result_available = False
         self.view.update_button_state()
-        #self.equation_string = ''
 
     def _angle_units(self):
-        #print(self.radians)
         self.view.update_angle_units()
 
     def _backspace(self):
@@ -131,51 +127,59 @@ class SciCalcController:
             self.equation.set('')
 
     def _move_cursor(self, button_text):
-        current_equation = self.equation.get()
-        cursor_position = len(current_equation)
         if button_text == '\u2bc7':
-            cursor_position = max(0, cursor_position - 1)
+            self.view.move_cursor(-1)
         else:
-            cursor_position = min(len(current_equation), cursor_position + 1)
+            self.view.move_cursor(1)
 
-        self.equation.set(current_equation)
-        self.view.move_cursor(cursor_position)
+    def _insert_at_cursor(self, text_to_insert):
+        cursor_position = self.view.get_cursor_position()
+        current_text = self.equation.get()
+        new_text = current_text[:cursor_position] + text_to_insert + current_text[cursor_position:]
+        self.equation.set(new_text)
+        move = len(text_to_insert)
+        self.view.move_cursor(move)
 
     def _basic_operations(self, button_text):
         if button_text in {'\u00d7', '\u00F7'}:
             button_text = ' * ' if button_text == '\u00d7' else ' / '
         elif button_text in {'+', '-'}:
             button_text = f' {button_text} '
-        #self.equation_string += button_text
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
 
     def _negate(self):
+        cursor_position = self.view.get_cursor_position()
         equation = self.equation.get()
-        last_space = equation.rfind(' ')
-        last_parenthesis = equation.rfind('(')
-        position = max(last_space, last_parenthesis)
+        negated_number = ''
+        start_index = cursor_position
+        while start_index > 0 and (equation[start_index - 1].isdigit()
+                                   or equation[start_index - 1] == '.'
+                                   or equation[start_index - 1] == '-'):
+            start_index -= 1
 
-        if position == -1:
-            new_equation = '-' + equation if not equation.startswith('-') else equation[1:]
-        else:
-            last_number = equation[position + 1:]
-            new_equation = (
-                equation[:position + 1] +
-                ('-' + last_number if not last_number.startswith('-') else last_number[1:])
-            )
+        end_index = cursor_position
+        while end_index < len(equation) and (equation[end_index].isdigit()
+                                             or equation[end_index] == '.'):
+            end_index += 1
+
+        current_number = equation[start_index:end_index]
+        negated_number = '-' + current_number if not current_number.startswith('-') else current_number[1:]
+        new_equation = equation[:start_index] + negated_number + equation[end_index:]
+        move = 1 if negated_number and negated_number[0] == '-' else -1
+        if cursor_position == len(equation):
+            move = 1
 
         self.equation.set(new_equation)
-        #self.equation_string = new_equation
+        self.view.move_cursor(move)
 
     def _constants(self, button_text):
         if button_text == 'e':
             button_text = str(exp(1))
         else:
             button_text = str(pi)
-        #self.equation_string += button_text
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        #new_equation = self.equation.get() + button_text
+        #self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
 
     def _trigonometry(self, button_text):
         if self.radians:
@@ -188,8 +192,9 @@ class SciCalcController:
                 button_text += '(radians('
             else:
                 button_text = 'degrees(a' + button_text[0:3] + '('
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
+        #new_equation = self.equation.get() + button_text
+        #self.equation.set(new_equation)
 
     def _exponents(self, button_text):
         if button_text == 'x\u00B2':
@@ -200,40 +205,44 @@ class SciCalcController:
             button_text = '10 ** '
         else:
             button_text =  'exp('
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
+        #new_equation = self.equation.get() + button_text
+        #self.equation.set(new_equation)
 
     def _logarithms(self, button_text):
         if button_text == 'log':
             button_text = 'log10' + '('
         else:
             button_text = 'log' + '('
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
+        #new_equation = self.equation.get() + button_text
+        #self.equation.set(new_equation)
 
     def _roots(self, button_text):
         button_text = 'sqrt' + '('
-        #self.equation_string += button_text
-        new_equation = self.equation.get() + button_text
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text)
+        #new_equation = self.equation.get() + button_text
+        #self.equation.set(new_equation)
 
     def _factorials(self):
-        new_equation = self.equation.get() + 'factorial('
-        self.equation.set(new_equation)
+        self._insert_at_cursor('factorial(')
+        #new_equation = self.equation.get() + 'factorial('
+        #self.equation.set(new_equation)
 
     def _modulus(self):
-        #self.equation_string += '%'
-        new_equation = self.equation.get() + '%'
-        self.equation.set(new_equation)
+        self._insert_at_cursor('%')
+        #new_equation = self.equation.get() + '%'
+        #self.equation.set(new_equation)
 
     def _absolute(self, button_text):
-        #self.equation_string += button_text + '('
-        new_equation = self.equation.get() + button_text + '('
-        self.equation.set(new_equation)
+        self._insert_at_cursor(button_text + '(')
+        #new_equation = self.equation.get() + button_text + '('
+        #self.equation.set(new_equation)
 
     def _floor(self):
-        new_equation = self.equation.get() + 'floor('
-        self.equation.set(new_equation)
+        self._insert_at_cursor('floor(')
+        #new_equation = self.equation.get() + 'floor('
+        #self.equation.set(new_equation)
 
     def _fractions(self):
         if self.result_available:
@@ -241,5 +250,12 @@ class SciCalcController:
             try:
                 fraction_result = Fraction(result).limit_denominator()
                 self.equation.set(fraction_result)
+                self.view.move_cursor(len(str(fraction_result)) - self.view.get_cursor_position())
             except ValueError:
                 self.equation.set("Conversion error")
+
+    def _undo_redo(self, action):
+        if action == 'undo':
+            print('undo')
+        elif action == 'redo':
+            print('redo')
