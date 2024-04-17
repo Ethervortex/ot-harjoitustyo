@@ -12,4 +12,5 @@
 | 7.4.  | 7    | lisää laskuoperaatioita |
 | 9.4.  | 3    | lisää testejä, database, luokkakaavio |
 | 14.4. | 6    | kursorin liikuttaminen ja lisääminen kaavan väliin |
-| **Yht.** | **47** | |
+| 17.4. | 6    | undo/redo ja historian näyttö |
+| **Yht.** | **53** | |

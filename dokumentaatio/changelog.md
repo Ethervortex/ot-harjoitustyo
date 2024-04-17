@@ -23,4 +23,6 @@
 
 ## Viikko 5
 - Loppujen funktiolaskujen toteutus
-- Kursori
+- Kursorin liikuttaminen sekä lisäys ja poistot laskukaavan keskeltä
+- Undo ja redo nappien toiminta kuntoon
+- Laskuhistorian näyttö

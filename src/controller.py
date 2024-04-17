@@ -1,4 +1,5 @@
 from tkinter import StringVar
+import tkinter as tk
 from math import (
     log10, log, sqrt, pi, exp, factorial, floor, sin, cos, tan,
     asin, acos, atan, radians, degrees
@@ -12,7 +13,8 @@ class SciCalcController:
         self.equation = StringVar(value='')
         self.result_available = False
         self.radians = True
-        self.previous_equations = []
+        self.history = []
+        self.history_index = -1
         self.database = SciCalcDatabase()
 
     def press(self, button_text):
@@ -62,22 +64,42 @@ class SciCalcController:
         self.result_available = False
         self.view.update_button_state()
 
+    def _update_history(self):
+        self.view._history.configure(state='normal')
+        self.view._history.delete(1.0, tk.END)
+        for i, item in enumerate(self.history):
+            equation_text = f"[{i + 1}]\t{item[0]} = {item[1]}\n"
+            self.view._history.insert(tk.END, equation_text)
+        self.view._history.yview(tk.END)
+        self.view._history.configure(state='disabled')
+
     def _evaluate(self):
-        print('equation_string:', self.equation.get())
         if not self.equation.get().strip():
             self._handle_error("No expression to evaluate")
             return
         try:
             result = self._safe_eval(self.equation.get())
             self.result_available = True
+            equation_text = f"{self.equation.get()} = {result}"
             self.view.update_button_state()
-            self.previous_equations.append((self.equation.get(), result))
+            print(self.history_index)
+            self.history = self.history[:self.history_index + 1]
+            self.history.append((self.equation.get(), result))
+            self.history_index = len(self.history) - 1
             self.equation.set(result)
-            print('Previous equations:', self.previous_equations)
+            print('History, index:', self.history, self.history_index)
             self.view.move_cursor(len(str(result)) - self.view.get_cursor_position())
-        except (SyntaxError, ValueError, ZeroDivisionError, NameError, TypeError) as e:
-            self._handle_error(f"Error: {e}")
-        except Exception as e:
+            self._update_history()
+
+        except SyntaxError:
+            self._handle_error("Syntax error")
+        except ZeroDivisionError:
+            self._handle_error("Division by zero error")
+        except NameError:
+            self._handle_error("Argument error")
+        except ValueError:
+            self._handle_error("Value error")
+        except Exception:
             self._handle_error("An unexpected error occurred")
 
     def _safe_eval(self, equation):
@@ -254,8 +276,24 @@ class SciCalcController:
             except ValueError:
                 self.equation.set("Conversion error")
 
-    def _undo_redo(self, action):
+    def _undo_redo(self, action): # undo-redo suunnan muutoksessa vielä hieman paranneltavaa
         if action == 'undo':
-            print('undo')
+            if self.history_index >= 0:
+                equation, result = self.history[self.history_index]
+                self.equation.set(equation)
+                self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
+                self.history_index -= 1
+                if self.history_index < 0:
+                    self.history_index = 0
+                self._update_history()
         elif action == 'redo':
-            print('redo')
+            if self.history_index < len(self.history) - 1:
+                self.history_index += 1
+                equation, result = self.history[self.history_index]
+                self.equation.set(equation)
+                self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
+            else:
+                self.history_index = len(self.history) - 1
+            self._update_history()
+        else:
+            return

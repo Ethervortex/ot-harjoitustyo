@@ -1,4 +1,4 @@
-from tkinter import ttk, constants
+from tkinter import ttk, constants, scrolledtext
 
 class SciCalcView:
 
@@ -57,6 +57,7 @@ class SciCalcView:
         style = ttk.Style()
         style.theme_use('alt')
         style.configure("MainFrame.TFrame", background='lightgrey')
+        style.configure("Padded.TEntry", padding=(10, 5))
         style.configure("Angle.TButton", font=('Segoe UI', 15, 'bold'), padding=(5, 5))
         style.map("Angle.TButton",
             background=[('pressed', 'lightyellow'), ('!pressed', 'yellow')])
@@ -74,11 +75,21 @@ class SciCalcView:
 
     def _add_widgets(self):
         self._frame = ttk.Frame(master=self._root, style="MainFrame.TFrame")
+        self._history_label = ttk.Label(self._frame, text="History:", font=('Arial', 14))
+        self._history = scrolledtext.ScrolledText(
+            self._frame,
+            wrap=constants.WORD,
+            font=('Arial', 12),
+            height=5,
+            padx=10
+        )
+        self._history.configure(state='disabled')
         self._entry_field = ttk.Entry(
             self._frame,
             textvariable=self._controller.equation,
             justify=constants.RIGHT,
-            font=('Arial', 18)
+            font=('Arial', 18),
+            style="Padded.TEntry"
         )
         self._entry_field.focus_set()
         self._cursor_visible = True
@@ -107,12 +118,16 @@ class SciCalcView:
             self._buttons_widgets.append(button)
 
     def _arrange_widgets(self):
-        self._entry_field.grid(row=0, column=0, columnspan=8,
-                               pady=10, ipady=15, sticky=constants.EW)
+        self._history_label.grid(row=0, column=0, columnspan=8,
+                             pady=0, padx=10, sticky=constants.W)
+        self._history.grid(row=1, column=0, columnspan=8,
+                                pady=5, padx=10, ipady=15, sticky=constants.EW)
+        self._entry_field.grid(row=2, column=0, columnspan=8,
+                               pady=10, padx=10, ipady=15, sticky=constants.EW)
         self._arrange_buttons()
 
     def _arrange_buttons(self):
-        row_num, col_num = 1, 0
+        row_num, col_num = 3, 0
         for i, button in enumerate(self._buttons_widgets):
             button.grid(row=row_num, column=col_num, padx=5, pady=5, sticky=constants.NSEW)
             if i == 0:
