@@ -1,4 +1,5 @@
 from tkinter import ttk, constants, scrolledtext
+import tkinter as tk
 
 class SciCalcView:
 
@@ -53,6 +54,15 @@ class SciCalcView:
         new_cursor_position = self._entry_field.index(constants.INSERT) + move
         self._entry_field.icursor(new_cursor_position)
 
+    def update_history_view(self, history):
+        self._history.configure(state='normal')
+        self._history.delete(1.0, tk.END)
+        for i, item in enumerate(history):
+            equation_text = f"[{i + 1}]\t{item[0]} = {item[1]}\n"
+            self._history.insert(tk.END, equation_text)
+        self._history.yview(tk.END)
+        self._history.configure(state='disabled')
+
     def _add_styles(self):
         style = ttk.Style()
         style.theme_use('alt')
@@ -91,6 +101,7 @@ class SciCalcView:
             font=('Arial', 18),
             style="Padded.TEntry"
         )
+        self._entry_field.bind("<Return>", lambda event: self._controller.evaluate_expression())
         self._entry_field.focus_set()
         self._cursor_visible = True
         self._entry_field.icursor("")

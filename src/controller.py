@@ -1,5 +1,4 @@
-from tkinter import StringVar
-import tkinter as tk
+from tkinter import StringVar, messagebox
 from math import (
     log10, log, sqrt, pi, exp, factorial, floor, sin, cos, tan,
     asin, acos, atan, radians, degrees
@@ -59,37 +58,50 @@ class SciCalcController:
         }
         button_functions[button_text]()
 
+    def evaluate_expression(self):
+        self._evaluate()
+
     def _handle_error(self, error_message):
         self.equation.set(error_message)
         self.result_available = False
+        self.view.move_cursor(len(str(error_message)) - self.view.get_cursor_position())
         self.view.update_button_state()
 
-    def _update_history(self):
-        self.view._history.configure(state='normal')
-        self.view._history.delete(1.0, tk.END)
-        for i, item in enumerate(self.history):
-            equation_text = f"[{i + 1}]\t{item[0]} = {item[1]}\n"
-            self.view._history.insert(tk.END, equation_text)
-        self.view._history.yview(tk.END)
-        self.view._history.configure(state='disabled')
+    def _show_message(self, message):
+        messagebox.showerror("Error", message)
+
+    def _check_parentheses(self, equation):
+        parantheses = []
+        for char in equation:
+            if char == '(':
+                parantheses.append(char)
+            elif char == ')':
+                if not parantheses:
+                    return True
+                parantheses.pop()
+        return bool(parantheses)
+
+    def _update_history_list(self, equation, result):
+        self.view.update_button_state()
+        self.history = self.history[:self.history_index + 1]
+        self.history.append((equation, result))
+        self.history_index = len(self.history) - 1
+        self.view.update_history_view(self.history)
 
     def _evaluate(self):
-        if not self.equation.get().strip():
-            self._handle_error("No expression to evaluate")
+        equation = self.equation.get().strip()
+        if self._check_parentheses(equation):
+            self._show_message("Unmatched parentheses")
+            return
+        if not equation:
+            self._show_message("No expression to evaluate")
             return
         try:
             result = self._safe_eval(self.equation.get())
             self.result_available = True
-            equation_text = f"{self.equation.get()} = {result}"
-            self.view.update_button_state()
-            print(self.history_index)
-            self.history = self.history[:self.history_index + 1]
-            self.history.append((self.equation.get(), result))
-            self.history_index = len(self.history) - 1
+            self._update_history_list(equation, result)
             self.equation.set(result)
-            print('History, index:', self.history, self.history_index)
             self.view.move_cursor(len(str(result)) - self.view.get_cursor_position())
-            self._update_history()
 
         except SyntaxError:
             self._handle_error("Syntax error")
@@ -135,15 +147,10 @@ class SciCalcController:
         self.view.update_button_state()
         current_equation = self.equation.get()
         if current_equation:
-            last_space = current_equation.rfind(' ')
-            if last_space == -1:
-                new_equation = current_equation[:-1]
-            else:
-                print('length:', len(current_equation)-1, 'last_space:', last_space)
-                if last_space == len(current_equation)-1:
-                    new_equation = current_equation[:-2]
-                else:
-                    new_equation = current_equation[:-1]
+            cursor_position = self.view.get_cursor_position()
+            to_cursor = current_equation[:cursor_position]
+            new_equation = to_cursor[:-1] + current_equation[cursor_position:]
+            self.view.move_cursor(-1)
             self.equation.set(new_equation)
         else:
             self.equation.set('')
@@ -185,7 +192,9 @@ class SciCalcController:
             end_index += 1
 
         current_number = equation[start_index:end_index]
-        negated_number = '-' + current_number if not current_number.startswith('-') else current_number[1:]
+        negated_number = (
+            '-' + current_number
+        ) if not current_number.startswith('-') else current_number[1:]
         new_equation = equation[:start_index] + negated_number + equation[end_index:]
         move = 1 if negated_number and negated_number[0] == '-' else -1
         if cursor_position == len(equation):
@@ -276,24 +285,23 @@ class SciCalcController:
             except ValueError:
                 self.equation.set("Conversion error")
 
-    def _undo_redo(self, action): # undo-redo suunnan muutoksessa vielä hieman paranneltavaa
+    def _undo_redo(self, action):
         if action == 'undo':
             if self.history_index >= 0:
-                equation, result = self.history[self.history_index]
+                equation, _ = self.history[self.history_index]
                 self.equation.set(equation)
                 self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
                 self.history_index -= 1
-                if self.history_index < 0:
-                    self.history_index = 0
-                self._update_history()
+                self.history_index = max(self.history_index, 0)
+                self.view.update_history_view(self.history)
         elif action == 'redo':
             if self.history_index < len(self.history) - 1:
                 self.history_index += 1
-                equation, result = self.history[self.history_index]
+                equation, _ = self.history[self.history_index]
                 self.equation.set(equation)
                 self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
             else:
                 self.history_index = len(self.history) - 1
-            self._update_history()
+            self.view.update_history_view(self.history)
         else:
             return

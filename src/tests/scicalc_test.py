@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from tkinter import Tk
 from ui import CalcUI
 
@@ -38,10 +39,7 @@ class TestSciCalc(unittest.TestCase):
         self.assertEqual(equation, '5')
 
     def test_errors(self):
-        self.ui._controller.press('=')
-        equation = self.ui._controller.equation.get()
-        self.assertEqual(equation, 'No expression to evaluate')
-        self.ui._controller.equation.set('7 + (')
+        self.ui._controller.equation.set('7 + ')
         self.ui._controller.press('=')
         equation = self.ui._controller.equation.get()
         self.assertEqual(equation, 'Syntax error')
@@ -58,6 +56,20 @@ class TestSciCalc(unittest.TestCase):
         equation = self.ui._controller.equation.get()
         self.assertEqual(equation, 'Value error')
 
+    @patch('tkinter.messagebox.showerror')
+    def test_messagebox(self, mock_message):
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('=')
+        mock_message.assert_called_with("Error", "No expression to evaluate")
+        self.ui._controller.equation.set('(1')
+        self.ui._controller.press('=')
+        mock_message.assert_called_with("Error", "Unmatched parentheses")
+
+    def test_check_parentheses(self):
+        equation = ')'
+        result = self.ui._controller._check_parentheses(equation)
+        self.assertTrue(result)
+
     def test_evaluate(self):
         self.ui._controller.equation.set('5 * (1 + 2)')
         self.ui._controller.press('=')
@@ -71,12 +83,14 @@ class TestSciCalc(unittest.TestCase):
 
     def test_backspace(self):
         self.ui._controller.equation.set('5 * (1 + 2)')
+        self.ui._view.move_cursor(len('5 * (1 + 2)'))
         self.ui._controller.press('\u232b')
         self.ui._controller.press('\u232b')
         self.ui._controller.press('\u232b')
         equation = self.ui._controller.equation.get()
-        self.assertEqual(equation, '5 * (1 ')
+        self.assertEqual(equation, '5 * (1 +')
         self.ui._controller.equation.set('6')
+        self.ui._view.move_cursor(1)
         self.ui._controller.press('\u232b')
         self.ui._controller.press('\u232b')
         equation = self.ui._controller.equation.get()

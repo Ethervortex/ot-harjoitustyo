@@ -13,4 +13,5 @@
 | 9.4.  | 3    | lisää testejä, database, luokkakaavio |
 | 14.4. | 6    | kursorin liikuttaminen ja lisääminen kaavan väliin |
 | 17.4. | 6    | undo/redo ja historian näyttö |
-| **Yht.** | **53** | |
+| 18.4. | 3    | backspace, varoitusikkuna ja bugien korjausta |
+| **Yht.** | **56** | |
