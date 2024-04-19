@@ -26,3 +26,5 @@
 - Kursorin liikuttaminen sekä lisäys ja poistot laskukaavan keskeltä
 - Undo ja redo nappien toiminta kuntoon
 - Laskuhistorian näyttö
+- Database suunnittelu aloitettu
+- Lisää testejä, sekvenssikaavio

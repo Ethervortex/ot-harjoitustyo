@@ -14,6 +14,9 @@ Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 - [Työaikakirjanpito](./dokumentaatio/tuntikirjanpito.md)
 - [Changelog](./dokumentaatio/changelog.md)
 
+## Release
+- x
+
 ## Asentaminen
 
 Asenna riippuvuudet komennolla:

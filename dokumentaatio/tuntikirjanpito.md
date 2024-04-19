@@ -14,4 +14,5 @@
 | 14.4. | 6    | kursorin liikuttaminen ja lisääminen kaavan väliin |
 | 17.4. | 6    | undo/redo ja historian näyttö |
 | 18.4. | 3    | backspace, varoitusikkuna ja bugien korjausta |
-| **Yht.** | **56** | |
+| 19.4. | 3    | testejä, sekvenssikaavio |
+| **Yht.** | **59** | |

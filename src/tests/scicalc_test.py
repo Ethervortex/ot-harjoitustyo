@@ -1,7 +1,9 @@
 import unittest
+import sqlite3
 from unittest.mock import patch
 from tkinter import Tk
 from ui import CalcUI
+from scicalc_db import SciCalcDatabase
 
 class TestSciCalc(unittest.TestCase):
     def setUp(self):
@@ -129,3 +131,34 @@ class TestSciCalc(unittest.TestCase):
         self.ui._controller.press('\u2bc8')
         position = self.ui._view.get_cursor_position()
         self.assertEqual(position, 4)
+
+    def test_trigonometry(self):
+        self.ui._controller.press('sin')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'sin(')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('cos\u207B\u00B9')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'acos(')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('radians')
+        self.ui._controller.press('tan')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'tan(radians(')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('sin\u207B\u00B9')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'degrees(asin(')
+
+class TestSciCalcDatabase(unittest.TestCase):
+    def setUp(self):
+        self.connection = sqlite3.connect(':memory:')
+        self.database = SciCalcDatabase(db_path=':memory:')
+        self.database.connection = self.connection
+
+    def tearDown(self):
+        self.connection.close()
+
+    def test_connect(self):
+        self.database.connect()
+        self.assertIsNotNone(self.database.connection)
