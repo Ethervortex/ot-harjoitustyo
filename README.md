@@ -15,7 +15,7 @@ Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 - [Changelog](./dokumentaatio/changelog.md)
 
 ## Release
-- x
+- [Viikko 5](https://github.com/Ethervortex/ot-harjoitustyo/releases/tag/viikko5)
 
 ## Asentaminen
 

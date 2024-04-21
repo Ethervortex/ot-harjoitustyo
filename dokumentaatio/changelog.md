@@ -28,3 +28,4 @@
 - Laskuhistorian näyttö
 - Database suunnittelu aloitettu
 - Lisää testejä, sekvenssikaavio
+- Release

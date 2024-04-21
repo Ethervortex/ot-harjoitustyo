@@ -15,4 +15,5 @@
 | 17.4. | 6    | undo/redo ja historian näyttö |
 | 18.4. | 3    | backspace, varoitusikkuna ja bugien korjausta |
 | 19.4. | 3    | testejä, sekvenssikaavio |
-| **Yht.** | **59** | |
+| 21.4. | 1    | viikko5 release |
+| **Yht.** | **60** | |
