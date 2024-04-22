@@ -23,7 +23,7 @@ Sovellus tarjoaa seuraavan tyyppisen näkymän laskutoimitusten suorittamiseen
 - Käyttäjä voi peruuttaa laskutoimituksissa taaksepän ja siirtyä eteenpäin - tehty
 - Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina - tehty
 - Suoritetut laskut kertyvät yläosassa olevalle näyttöalueelle - tehty
-- Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä
+- Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä - kesken
 
 ## Jatkokehitysideoita
 

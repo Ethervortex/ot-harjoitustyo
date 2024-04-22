@@ -7,7 +7,19 @@ from fractions import Fraction
 from scicalc_db import SciCalcDatabase
 
 class SciCalcController:
+    """
+    Controller class for the scientific calculator. This class handles user interactions and
+    control logic of the scientific calculator.
+
+    Attributes:
+        view (SciCalcView): The associated GUI.
+    """
     def __init__(self, view):
+        """Initialize the SciCalcController.
+
+        Args:
+            view (SciCalcView): The associated view.
+        """
         self.view = view
         self.equation = StringVar(value='')
         self.result_available = False
@@ -17,6 +29,11 @@ class SciCalcController:
         self.database = SciCalcDatabase()
 
     def press(self, button_text):
+        """Handle button press.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         button_functions = {
             '=': self._evaluate,
             'C': self._clear,
@@ -54,23 +71,42 @@ class SciCalcController:
             'a/b': self._fractions,
             '\u21b6': lambda: self._undo_redo('undo'),
             '\u21b7': lambda: self._undo_redo('redo'),
-            **{str(i): lambda digit=i: self._basic_operations(str(digit)) for i in range(10)}
+            **{str(i): lambda digit=i: self._basic_operations(str(digit)) for i in range(10)},
+            'Save': lambda: self._history_db('save'),
+            'Load': lambda: self._history_db('load'),
+            'Clear': lambda: self._history_db('clear')
         }
         button_functions[button_text]()
 
     def evaluate_expression(self):
+        """Evaluate the current expression."""
         self._evaluate()
 
     def _handle_error(self, error_message):
+        """Handle and show errors.
+
+        Args:
+             (str): The error message to show.
+        """
         self.equation.set(error_message)
         self.result_available = False
         self.view.move_cursor(len(str(error_message)) - self.view.get_cursor_position())
         self.view.update_button_state()
 
     def _show_message(self, message):
+        """Show a message box with an error message.
+
+        Args:
+            message (str): The message to display.
+        """
         messagebox.showerror("Error", message)
 
     def _check_parentheses(self, equation):
+        """Check for unmatched parentheses in the equation.
+
+        Args:
+            equation (str): The equation to check.
+        """
         parantheses = []
         for char in equation:
             if char == '(':
@@ -82,6 +118,11 @@ class SciCalcController:
         return bool(parantheses)
 
     def _update_history_list(self, equation, result):
+        """Update the history list with the current equation and result.
+
+        Args:
+            equation (str): The current equation.
+            result: The result of the evaluation."""
         self.view.update_button_state()
         self.history = self.history[:self.history_index + 1]
         self.history.append((equation, result))
@@ -89,6 +130,7 @@ class SciCalcController:
         self.view.update_history_view(self.history)
 
     def _evaluate(self):
+        """Evaluate the current equation and handle errors."""
         equation = self.equation.get().strip()
         if self._check_parentheses(equation):
             self._show_message("Unmatched parentheses")
@@ -111,10 +153,13 @@ class SciCalcController:
             self._handle_error("Argument error")
         except ValueError:
             self._handle_error("Value error")
-        except Exception:
-            self._handle_error("An unexpected error occurred")
 
     def _safe_eval(self, equation):
+        """Define safe functions and safely evaluate the mathematical expression.
+
+        Args:
+            equation (str): The expression to evaluate.
+        """
         safe_functions = {
             'sin': sin,
             'cos': cos,
@@ -135,14 +180,17 @@ class SciCalcController:
         return eval(equation, {}, safe_functions)
 
     def _clear(self):
+        """Clear the current equation."""
         self.equation.set('')
         self.result_available = False
         self.view.update_button_state()
 
     def _angle_units(self):
+        """Change angle units (radians/degrees)."""
         self.view.update_angle_units()
 
     def _backspace(self):
+        """Handle the backspace button press."""
         self.result_available = False
         self.view.update_button_state()
         current_equation = self.equation.get()
@@ -156,12 +204,22 @@ class SciCalcController:
             self.equation.set('')
 
     def _move_cursor(self, button_text):
+        """Handle the cursor moving buttons (left/right)
+        
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if button_text == '\u2bc7':
             self.view.move_cursor(-1)
         else:
             self.view.move_cursor(1)
 
     def _insert_at_cursor(self, text_to_insert):
+        """Insert text at the current cursor position.
+
+        Args:
+            text_to_insert (str): The text to insert.
+        """
         cursor_position = self.view.get_cursor_position()
         current_text = self.equation.get()
         new_text = current_text[:cursor_position] + text_to_insert + current_text[cursor_position:]
@@ -170,6 +228,11 @@ class SciCalcController:
         self.view.move_cursor(move)
 
     def _basic_operations(self, button_text):
+        """Handle basic arithmetic operations (*, /, + and -).
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if button_text in {'\u00d7', '\u00F7'}:
             button_text = ' * ' if button_text == '\u00d7' else ' / '
         elif button_text in {'+', '-'}:
@@ -177,6 +240,7 @@ class SciCalcController:
         self._insert_at_cursor(button_text)
 
     def _negate(self):
+        """Negate the current number."""
         cursor_position = self.view.get_cursor_position()
         equation = self.equation.get()
         negated_number = ''
@@ -204,15 +268,23 @@ class SciCalcController:
         self.view.move_cursor(move)
 
     def _constants(self, button_text):
+        """Handle buttons for mathematical constants pi and e.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if button_text == 'e':
             button_text = str(exp(1))
         else:
             button_text = str(pi)
-        #new_equation = self.equation.get() + button_text
-        #self.equation.set(new_equation)
         self._insert_at_cursor(button_text)
 
     def _trigonometry(self, button_text):
+        """Handle trigonometric functions.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if self.radians:
             if button_text in {'sin', 'cos', 'tan'}:
                 button_text += '('
@@ -224,10 +296,13 @@ class SciCalcController:
             else:
                 button_text = 'degrees(a' + button_text[0:3] + '('
         self._insert_at_cursor(button_text)
-        #new_equation = self.equation.get() + button_text
-        #self.equation.set(new_equation)
 
     def _exponents(self, button_text):
+        """Handle exponentiation operations.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if button_text == 'x\u00B2':
             button_text = ' ** 2'
         elif button_text == 'x\u02B8':
@@ -237,45 +312,50 @@ class SciCalcController:
         else:
             button_text =  'exp('
         self._insert_at_cursor(button_text)
-        #new_equation = self.equation.get() + button_text
-        #self.equation.set(new_equation)
 
     def _logarithms(self, button_text):
+        """Handle logarithmic operations log10 and ln.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         if button_text == 'log':
             button_text = 'log10' + '('
         else:
             button_text = 'log' + '('
         self._insert_at_cursor(button_text)
-        #new_equation = self.equation.get() + button_text
-        #self.equation.set(new_equation)
 
     def _roots(self, button_text):
+        """Handle operations for square root
+        
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         button_text = 'sqrt' + '('
         self._insert_at_cursor(button_text)
-        #new_equation = self.equation.get() + button_text
-        #self.equation.set(new_equation)
 
     def _factorials(self):
+        """Handle factorial operation."""
         self._insert_at_cursor('factorial(')
-        #new_equation = self.equation.get() + 'factorial('
-        #self.equation.set(new_equation)
 
     def _modulus(self):
+        """Handle modulus operation."""
         self._insert_at_cursor('%')
-        #new_equation = self.equation.get() + '%'
-        #self.equation.set(new_equation)
 
     def _absolute(self, button_text):
+        """Handle absolute value operation.
+
+        Args:
+            button_text (str): The text of the pressed button.
+        """
         self._insert_at_cursor(button_text + '(')
-        #new_equation = self.equation.get() + button_text + '('
-        #self.equation.set(new_equation)
 
     def _floor(self):
+        """Handle floor operation."""
         self._insert_at_cursor('floor(')
-        #new_equation = self.equation.get() + 'floor('
-        #self.equation.set(new_equation)
 
     def _fractions(self):
+        """Convert the result to a fraction."""
         if self.result_available:
             result = self.equation.get()
             try:
@@ -286,6 +366,11 @@ class SciCalcController:
                 self.equation.set("Conversion error")
 
     def _undo_redo(self, action):
+        """Undo or redo the previous operations (retrieve equations from history list).
+
+        Args:
+            action (str): 'undo' or 'redo'.
+        """
         if action == 'undo':
             if self.history_index >= 0:
                 equation, _ = self.history[self.history_index]
@@ -305,3 +390,41 @@ class SciCalcController:
             self.view.update_history_view(self.history)
         else:
             return
+
+    def _history_db(self, action):
+        if action == 'save':
+            if self.history:
+                confirmation = messagebox.askokcancel(
+                    "Confirmation",
+                    "Are you sure you want to save the history to the database?"
+                )
+                if confirmation:
+                    self.database.connect()
+                    self.database.clear_history()
+                    for equation, result in self.history:
+                        self.database.save_history(equation, result)
+                    self.database.close_connection()
+        elif action == 'load':
+            confirmation = messagebox.askokcancel(
+                "Confirmation",
+                "Are you sure you want to load the history from the databse?"
+            )
+            if confirmation:
+                self.database.connect()
+                loaded_data = self.database.load_history()
+                self.history = loaded_data
+                self.history_index = len(loaded_data) - 1
+                self.view.update_history_view(self.history)
+                self.database.close_connection()
+        else:
+            confirmation = messagebox.askokcancel(
+                "Confirmation",
+                "Are you sure you want to clear the database?"
+            )
+            if confirmation:
+                self.database.connect()
+                self.database.clear_history()
+                self.database.close_connection()
+                self.history = []
+                self.history_index = -1
+                self.view.update_history_view(self.history)

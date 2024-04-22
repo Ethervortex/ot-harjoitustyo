@@ -150,10 +150,84 @@ class TestSciCalc(unittest.TestCase):
         equation = self.ui._controller.equation.get()
         self.assertEqual(equation, 'degrees(asin(')
 
+    def test_exponents(self):
+        self.ui._controller.press('x\u00B2')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' ** 2')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('x\u02B8')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, ' ** ')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('10\u02E3')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '10 ** ')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('e\u02E3')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'exp(')
+
+    def test_logarithms(self):
+        self.ui._controller.press('log')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'log10(')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('ln')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'log(')
+
+    def test_roots(self):
+        self.ui._controller.press('\u221ax')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'sqrt(')
+
+    def test_factorials(self):
+        self.ui._controller.press('x!')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'factorial(')
+
+    def test_modulus(self):
+        self.ui._controller.press('mod')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '%')
+
+    def test_absolute(self):
+        self.ui._controller.press('abs')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'abs(')
+
+    def test_fractions(self):
+        self.ui._controller.equation.set('2.5')
+        self.ui._controller.press('=')
+        self.ui._controller.result_available = True
+        self.ui._controller.press('a/b')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '5/2')
+        self.ui._controller.press('(')
+        self.ui._controller.press('a/b')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, 'Conversion error')
+        self.ui._controller.press('C')
+        self.ui._controller.press('a/b')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '')
+
+    def test_undo_redo(self):
+        self.ui._controller.equation.set('10 + 2')
+        self.ui._controller.press('=')
+        self.ui._controller.equation.set('6 * 6')
+        self.ui._controller.press('=')
+        self.ui._controller.equation.set('sqrt(4)')
+        self.ui._controller.press('=')
+        self.ui._controller.press('\u21b6')
+        self.ui._controller.press('\u21b6')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '6 * 6')
+
 class TestSciCalcDatabase(unittest.TestCase):
     def setUp(self):
         self.connection = sqlite3.connect(':memory:')
-        self.database = SciCalcDatabase(db_path=':memory:')
+        self.database = SciCalcDatabase(db_file=':memory:')
         self.database.connection = self.connection
 
     def tearDown(self):

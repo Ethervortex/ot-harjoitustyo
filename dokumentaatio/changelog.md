@@ -29,3 +29,7 @@
 - Database suunnittelu aloitettu
 - Lisää testejä, sekvenssikaavio
 - Release
+
+## Viikko 6
+- Lisätty docstringeja luokkiin ja metodeihin
+- Laskuhistorian tallennus tietokantaan toteutettu
