@@ -33,3 +33,6 @@
 ## Viikko 6
 - Lisätty docstringeja luokkiin ja metodeihin
 - Laskuhistorian tallennus tietokantaan toteutettu
+- Laskuhistorian lataus nimellä tietokannasta
+- Tietokannan tyhjennysmahdollisuus lisätty
+- Muistitoimintojen lisäys laskimeen

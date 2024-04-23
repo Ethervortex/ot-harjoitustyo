@@ -1,4 +1,4 @@
-from tkinter import StringVar, messagebox
+from tkinter import StringVar, messagebox, simpledialog
 from math import (
     log10, log, sqrt, pi, exp, factorial, floor, sin, cos, tan,
     asin, acos, atan, radians, degrees
@@ -27,6 +27,7 @@ class SciCalcController:
         self.history = []
         self.history_index = -1
         self.database = SciCalcDatabase()
+        self.memory = None
 
     def press(self, button_text):
         """Handle button press.
@@ -72,9 +73,11 @@ class SciCalcController:
             '\u21b6': lambda: self._undo_redo('undo'),
             '\u21b7': lambda: self._undo_redo('redo'),
             **{str(i): lambda digit=i: self._basic_operations(str(digit)) for i in range(10)},
-            'Save': lambda: self._history_db('save'),
-            'Load': lambda: self._history_db('load'),
-            'Clear': lambda: self._history_db('clear')
+            'Save': self.history_db_save,
+            'Load': self.history_db_load,
+            'Clear': self.history_db_clear,
+            'MS': lambda: self._memory('MS'),
+            'MR': lambda: self._memory('MR')
         }
         button_functions[button_text]()
 
@@ -93,7 +96,7 @@ class SciCalcController:
         self.view.move_cursor(len(str(error_message)) - self.view.get_cursor_position())
         self.view.update_button_state()
 
-    def _show_message(self, message):
+    def show_message(self, message):
         """Show a message box with an error message.
 
         Args:
@@ -133,10 +136,10 @@ class SciCalcController:
         """Evaluate the current equation and handle errors."""
         equation = self.equation.get().strip()
         if self._check_parentheses(equation):
-            self._show_message("Unmatched parentheses")
+            self.show_message("Unmatched parentheses")
             return
         if not equation:
-            self._show_message("No expression to evaluate")
+            self.show_message("No expression to evaluate")
             return
         try:
             result = self._safe_eval(self.equation.get())
@@ -364,6 +367,7 @@ class SciCalcController:
                 self.view.move_cursor(len(str(fraction_result)) - self.view.get_cursor_position())
             except ValueError:
                 self.equation.set("Conversion error")
+                self.view.move_cursor(len(self.equation.get()) - self.view.get_cursor_position())
 
     def _undo_redo(self, action):
         """Undo or redo the previous operations (retrieve equations from history list).
@@ -391,40 +395,55 @@ class SciCalcController:
         else:
             return
 
-    def _history_db(self, action):
-        if action == 'save':
-            if self.history:
-                confirmation = messagebox.askokcancel(
-                    "Confirmation",
-                    "Are you sure you want to save the history to the database?"
-                )
-                if confirmation:
-                    self.database.connect()
-                    self.database.clear_history()
-                    for equation, result in self.history:
-                        self.database.save_history(equation, result)
-                    self.database.close_connection()
-        elif action == 'load':
-            confirmation = messagebox.askokcancel(
-                "Confirmation",
-                "Are you sure you want to load the history from the databse?"
-            )
-            if confirmation:
-                self.database.connect()
-                loaded_data = self.database.load_history()
-                self.history = loaded_data
-                self.history_index = len(loaded_data) - 1
-                self.view.update_history_view(self.history)
-                self.database.close_connection()
+    def _memory(self, button_text):
+        """Handle memory-related operations Memory Store and Memory Recall.
+        Args:
+            button_text (str): The text of the pressed button.
+        """
+        if button_text == 'MS':
+            if self.result_available:
+                self.memory = self.equation.get()
         else:
-            confirmation = messagebox.askokcancel(
-                "Confirmation",
-                "Are you sure you want to clear the database?"
-            )
-            if confirmation:
+            if self.memory is not None:
+                self._insert_at_cursor(str(self.memory))
+
+    def load_history_from_db(self, name):
+        """Load a saved history from the database.
+        Args:
+            name (str): The name of the saved history to load.
+        """
+        if name:
+            self.database.connect()
+            loaded_data = self.database.load_history(name)
+            self.history = loaded_data
+            self.history_index = len(loaded_data) - 1
+            self.view.update_history_view(self.history)
+            self.database.close_connection()
+
+    def history_db_save(self):
+        """Save the current history to the database."""
+        if self.history:
+            name = simpledialog.askstring("Save History", "Enter a name for the saved history:")
+            if name:
                 self.database.connect()
-                self.database.clear_history()
+                for equation, result in self.history:
+                    self.database.save_history(name, equation, result)
                 self.database.close_connection()
-                self.history = []
-                self.history_index = -1
-                self.view.update_history_view(self.history)
+
+    def history_db_load(self):
+        saved_names = self.database.get_saved_names()
+        if saved_names:
+            self.view.create_combobox(saved_names)
+
+    def history_db_clear(self):
+        confirmation = messagebox.askokcancel(
+            "Confirmation",
+            "Are you sure you want to clear the database?"
+            )
+        if confirmation:
+            self.database.connect()
+            self.database.clear_history()
+            self.database.close_connection()
+            self.history = []
+            self.history_index = -1
+            self.view.update_history_view(self.history)

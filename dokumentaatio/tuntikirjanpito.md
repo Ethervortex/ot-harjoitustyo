@@ -17,4 +17,5 @@
 | 19.4. | 3    | testejä, sekvenssikaavio |
 | 21.4. | 1    | viikko5 release |
 | 22.4. | 5    | docstringejä, lisää testejä, database-metodien toteutusta |
-| **Yht.** | **65** | |
+| 23.4. | 4    | database operaatiot, muistitoiminnon lisäys laskimeen |
+| **Yht.** | **69** | |

@@ -21,13 +21,15 @@ class SciCalcView:
         self._buttons_widgets = []
         self._buttons = [
             'Save', 'Load', 'Clear',
-            'radians', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
+            'radians', 'MS', 'MR', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
             'sin', 'cos', 'tan', '\u03c0', '(', ')', '\u00b1', '÷',
             'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9', 'e', '7', '8', '9', '×',
             'x\u00b2', 'x\u02B8', '\u221ax', '\u230Ax\u230B', '4', '5', '6', '-',
             'log', 'ln', '10\u02E3', 'e\u02E3', '1', '2', '3', '+',
             'x!', 'mod', 'abs', 'a/b', '0', '.', '=',
         ]
+        self._menu_bar = None
+        self._database_menu = None
         self._add_styles()
         self._add_widgets()
         self._arrange_widgets()
@@ -46,8 +48,13 @@ class SciCalcView:
         the result availability.
         """
         for button in self._buttons_widgets:
-            if button["text"] == 'a/b':
+            if button["text"] in {'a/b', 'MS'}:
                 if self._controller.result_available:
+                    button.configure(style="Fraction.TButton", state='!disabled')
+                else:
+                    button.configure(style="Fraction.TButton", state='disabled')
+            elif button["text"] == 'MR':
+                if self._controller.memory is not None:
                     button.configure(style="Fraction.TButton", state='!disabled')
                 else:
                     button.configure(style="Fraction.TButton", state='disabled')
@@ -100,7 +107,7 @@ class SciCalcView:
         style.configure("Padded.TEntry", padding=(10, 5))
         style.configure("Angle.TButton", font=('Segoe UI', 15, 'bold'), padding=(0, 3))
         style.map("Angle.TButton",
-            background=[('pressed', 'lightyellow'), ('!pressed', 'yellow')])
+            background=[('pressed', 'lightyellow'), ('!pressed', 'darkgrey')])
         style.configure("Calc.TButton", font=('Segoe UI', 15, 'bold'), background='lightgrey')
         style.configure("Number.TButton", font=('Segoe UI', 16, 'bold'), background='darkgrey')
         style.configure("BasicOperation.TButton",
@@ -112,11 +119,13 @@ class SciCalcView:
         style.map("Fraction.TButton",
             foreground=[('disabled', 'grey'), ('!disabled', 'black')],
             background=[('active', 'white'), ('disabled', 'lightgrey'), ('!disabled', 'darkgrey')])
+        style.configure("History.TButton", font=('Arial', 14), background='darkgrey')
+        style.configure("Popup.TButton", font=('Arial', 14), background='lightgreen')
 
     def _add_widgets(self):
         """Initializes the widgets of the GUI, including labels, history view and entry field."""
         self._frame = ttk.Frame(master=self._root, style="MainFrame.TFrame")
-        self._history_label = ttk.Label(self._frame, text="History:", font=('Arial', 14))
+        self._history_label = ttk.Label(self._frame, text="History:", font=('Arial', 12))
         self._history = scrolledtext.ScrolledText(
             self._frame,
             wrap=constants.WORD,
@@ -137,6 +146,7 @@ class SciCalcView:
         self._cursor_visible = True
         self._entry_field.icursor("")
         self._add_buttons()
+        self._add_menus()
 
     def _add_buttons(self):
         """Initializes the buttons based on the _buttons list."""
@@ -147,7 +157,7 @@ class SciCalcView:
                 else "Equal.TButton" if button_text == '='
                 else "Clear.TButton" if button_text == 'C'
                 else "Backspace.TButton" if button_text == '\u232b'
-                else "Fraction.TButton" if button_text == 'a/b'
+                else "Fraction.TButton" if button_text in ['a/b', 'MS', 'MR']
                 else "Angle.TButton" if button_text in ['radians', 'degrees']
                 else "History.TButton" if button_text in ['Save', 'Load', 'Clear']
                 else "Calc.TButton"
@@ -161,12 +171,31 @@ class SciCalcView:
             )
             self._buttons_widgets.append(button)
 
+    def _add_menus(self):
+        """Adds a menubar with database-related options Save, Load and Clear."""
+        self._menu_bar = tk.Menu()
+        self._database_menu = tk.Menu(self._menu_bar, tearoff=False, font=('Arial', 12))
+        self._database_menu.add_command(
+            label="Save history",
+            command=self._controller.history_db_save
+        )
+        self._database_menu.add_command(
+            label="Load history",
+            command=self._controller.history_db_load
+        )
+        self._database_menu.add_command(
+            label="Clear database",
+            command=self._controller.history_db_clear
+        )
+        self._menu_bar.add_cascade(label="Database", menu=self._database_menu)
+        self._root.config(menu=self._menu_bar)
+
     def _arrange_widgets(self):
         """Arranges the widgets within the main frame, specifying their positions."""
         self._history_label.grid(row=0, column=0, columnspan=2,
-                             pady=0, padx=10, sticky=constants.W)
-        for i, button in enumerate(self._buttons_widgets[:3]):
-            button.grid(row=0, column=2+i, padx=5, pady=5, sticky=constants.W)
+                             pady=(10,0), padx=10, sticky=constants.W)
+        #for i, button in enumerate(self._buttons_widgets[:3]):
+        #    button.grid(row=0, column=2+i, padx=5, pady=5, sticky=constants.W)
         self._history.grid(row=1, column=0, columnspan=8,
                                 pady=5, padx=10, ipady=15, sticky=constants.EW)
         self._entry_field.grid(row=2, column=0, columnspan=8,
@@ -180,7 +209,7 @@ class SciCalcView:
             button.grid(row=row_num, column=col_num, padx=5, pady=5, sticky=constants.NSEW)
             if i == 0:
                 button.grid(columnspan=2)
-                col_num += 1
+                col_num += 7
             col_num += 1
             if button["text"] == '=':
                 button.grid(columnspan=2)
@@ -197,3 +226,35 @@ class SciCalcView:
         """
         self._controller.press(button_text)
         self._entry_field.focus_set()
+
+    def create_combobox(self, saved_names):
+        """Creates a popup with a combobox for selecting a history entry.
+        
+        Args:
+            saved_names (list): A list of saved history names.
+        """
+        popup = tk.Toplevel(self._root)
+        popup.title("Load History")
+        label = ttk.Label(popup, text="Select a history from the list:",
+                          font=('Arial', 14), background='lightgrey')
+        label.pack(padx=10, pady=10)
+        combobox = ttk.Combobox(popup, state="readonly", values=saved_names, font=('Arial', 14))
+        combobox.pack(padx=10, pady=10)
+        button = ttk.Button(
+            popup, text="Load",
+            command=lambda: self._load_from_combobox(combobox, popup),
+            style="Popup.TButton"
+        )
+        button.pack(pady=10)
+
+    def _load_from_combobox(self, combobox, popup):
+        """Loads the selected history from the combobox.
+
+        Args:
+            combobox (ttk.Combobox): The combobox widget containing saved history names.
+            popup (tk.Toplevel): The popup window containing the combobox.
+        """
+        selected_name = combobox.get()
+        if selected_name:
+            popup.destroy()
+            self._controller.load_history_from_db(selected_name)
