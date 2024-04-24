@@ -8,6 +8,15 @@ class SciCalcView:
         _root (tk.Tk): The root Tkinter window.
         _controller (SciCalcController): The associated controller handling user interactions.
     """
+    _BUTTONS = [
+            'radians', 'MS', 'MR', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
+            'sin', 'cos', 'tan', '\u03c0', '(', ')', '\u00b1', '÷',
+            'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9', 'e', '7', '8', '9', '×',
+            'x\u00b2', 'x\u02B8', '\u221ax', '\u230Ax\u230B', '4', '5', '6', '-',
+            'log', 'ln', '10\u02E3', 'e\u02E3', '1', '2', '3', '+',
+            'x!', 'mod', 'abs', 'a/b', '0', '.', '=', 
+    ]
+
     def __init__(self, root, controller):
         """Initializes the SciCalcView.
 
@@ -19,15 +28,6 @@ class SciCalcView:
         self._controller = controller
         self._frame = None
         self._buttons_widgets = []
-        self._buttons = [
-            'Save', 'Load', 'Clear',
-            'radians', 'MS', 'MR', '\u21b6', '\u21b7', '\u2bc7', '\u2bc8', '\u232b', 'C',
-            'sin', 'cos', 'tan', '\u03c0', '(', ')', '\u00b1', '÷',
-            'sin\u207B\u00B9', 'cos\u207B\u00B9', 'tan\u207B\u00B9', 'e', '7', '8', '9', '×',
-            'x\u00b2', 'x\u02B8', '\u221ax', '\u230Ax\u230B', '4', '5', '6', '-',
-            'log', 'ln', '10\u02E3', 'e\u02E3', '1', '2', '3', '+',
-            'x!', 'mod', 'abs', 'a/b', '0', '.', '=',
-        ]
         self._menu_bar = None
         self._database_menu = None
         self._add_styles()
@@ -44,20 +44,20 @@ class SciCalcView:
         self._frame.destroy()
 
     def update_button_state(self):
-        """Updates the state of buttons - enable or disable the fraction button based on 
-        the result availability.
+        """Updates the state of buttons - enable or disable the button based on 
+        the result or memory availability.
         """
         for button in self._buttons_widgets:
             if button["text"] in {'a/b', 'MS'}:
                 if self._controller.result_available:
-                    button.configure(style="Fraction.TButton", state='!disabled')
+                    button.configure(style="Disable.TButton", state='!disabled')
                 else:
-                    button.configure(style="Fraction.TButton", state='disabled')
+                    button.configure(style="Disable.TButton", state='disabled')
             elif button["text"] == 'MR':
                 if self._controller.memory is not None:
-                    button.configure(style="Fraction.TButton", state='!disabled')
+                    button.configure(style="Disable.TButton", state='!disabled')
                 else:
-                    button.configure(style="Fraction.TButton", state='disabled')
+                    button.configure(style="Disable.TButton", state='disabled')
 
     def update_angle_units(self):
         """Updates the angle units button text and the controller's radians attribute."""
@@ -115,8 +115,8 @@ class SciCalcView:
         style.configure("Equal.TButton", font=('Segoe UI', 16, 'bold'), background='#606060')
         style.configure("Clear.TButton", font=('Segoe UI', 15, 'bold'), background='red')
         style.configure("Backspace.TButton", font=('Segoe UI', 15, 'bold'), background='orange')
-        style.configure("Fraction.TButton", font=('Segoe UI', 15, 'bold'), background='lightgray')
-        style.map("Fraction.TButton",
+        style.configure("Disable.TButton", font=('Segoe UI', 15, 'bold'), background='lightgray')
+        style.map("Disable.TButton",
             foreground=[('disabled', 'grey'), ('!disabled', 'black')],
             background=[('active', 'white'), ('disabled', 'lightgrey'), ('!disabled', 'darkgrey')])
         style.configure("History.TButton", font=('Arial', 14), background='darkgrey')
@@ -141,7 +141,7 @@ class SciCalcView:
             font=('Arial', 18),
             style="Padded.TEntry"
         )
-        self._entry_field.bind("<Return>", lambda event: self._controller.evaluate_expression())
+        self._entry_field.bind("<Return>", lambda event: self._controller.evaluate())
         self._entry_field.focus_set()
         self._cursor_visible = True
         self._entry_field.icursor("")
@@ -150,14 +150,14 @@ class SciCalcView:
 
     def _add_buttons(self):
         """Initializes the buttons based on the _buttons list."""
-        for button_text in self._buttons:
+        for button_text in SciCalcView._BUTTONS:
             button_style = (
                 "Number.TButton" if button_text.isdigit() or button_text in ['.', '(', ')', '±']
                 else "BasicOperation.TButton" if button_text in ['+', '-', '×', '÷']
                 else "Equal.TButton" if button_text == '='
                 else "Clear.TButton" if button_text == 'C'
                 else "Backspace.TButton" if button_text == '\u232b'
-                else "Fraction.TButton" if button_text in ['a/b', 'MS', 'MR']
+                else "Disable.TButton" if button_text in ['a/b', 'MS', 'MR']
                 else "Angle.TButton" if button_text in ['radians', 'degrees']
                 else "History.TButton" if button_text in ['Save', 'Load', 'Clear']
                 else "Calc.TButton"
@@ -194,8 +194,6 @@ class SciCalcView:
         """Arranges the widgets within the main frame, specifying their positions."""
         self._history_label.grid(row=0, column=0, columnspan=2,
                              pady=(10,0), padx=10, sticky=constants.W)
-        #for i, button in enumerate(self._buttons_widgets[:3]):
-        #    button.grid(row=0, column=2+i, padx=5, pady=5, sticky=constants.W)
         self._history.grid(row=1, column=0, columnspan=8,
                                 pady=5, padx=10, ipady=15, sticky=constants.EW)
         self._entry_field.grid(row=2, column=0, columnspan=8,
@@ -205,7 +203,7 @@ class SciCalcView:
     def _arrange_buttons(self):
         """Arranges the buttons within the main frame."""
         row_num, col_num = 3, 0
-        for i, button in enumerate(self._buttons_widgets[3:]):
+        for i, button in enumerate(self._buttons_widgets):
             button.grid(row=row_num, column=col_num, padx=5, pady=5, sticky=constants.NSEW)
             if i == 0:
                 button.grid(columnspan=2)
@@ -229,7 +227,7 @@ class SciCalcView:
 
     def create_combobox(self, saved_names):
         """Creates a popup with a combobox for selecting a history entry.
-        
+
         Args:
             saved_names (list): A list of saved history names.
         """

@@ -18,4 +18,5 @@
 | 21.4. | 1    | viikko5 release |
 | 22.4. | 5    | docstringejä, lisää testejä, database-metodien toteutusta |
 | 23.4. | 4    | database operaatiot, muistitoiminnon lisäys laskimeen |
-| **Yht.** | **69** | |
+| 24.4. | 4    | bugien korjausta, lisää testejä |
+| **Yht.** | **73** | |

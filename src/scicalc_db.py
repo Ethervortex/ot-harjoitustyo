@@ -54,7 +54,6 @@ class SciCalcDatabase:
                     'INSERT INTO Equations (name, equation, result) VALUES (?, ?, ?)',
                     (name, equation, result)
                 )
-                print("History saved.")
         except sqlite3.Error:
             print("Error saving equation to the database.")
 
@@ -91,7 +90,7 @@ class SciCalcDatabase:
                     'SELECT equation, result FROM Equations WHERE name = ? ORDER BY id',
                     (name,)
                 )
-                print("History loaded.")
+                print("History loaded")
                 return cursor.fetchall()
         except sqlite3.Error:
             print("Error loading equations from the database.")

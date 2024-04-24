@@ -26,7 +26,7 @@
 - Kursorin liikuttaminen sekä lisäys ja poistot laskukaavan keskeltä
 - Undo ja redo nappien toiminta kuntoon
 - Laskuhistorian näyttö
-- Database suunnittelu aloitettu
+- Tietokannan suunnittelu aloitettu
 - Lisää testejä, sekvenssikaavio
 - Release
 
@@ -36,3 +36,4 @@
 - Laskuhistorian lataus nimellä tietokannasta
 - Tietokannan tyhjennysmahdollisuus lisätty
 - Muistitoimintojen lisäys laskimeen
+- Dokumentaatio

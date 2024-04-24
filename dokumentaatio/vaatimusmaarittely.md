@@ -23,12 +23,13 @@ Sovellus tarjoaa seuraavan tyyppisen näkymän laskutoimitusten suorittamiseen
 - Käyttäjä voi peruuttaa laskutoimituksissa taaksepän ja siirtyä eteenpäin - tehty
 - Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina - tehty
 - Suoritetut laskut kertyvät yläosassa olevalle näyttöalueelle - tehty
-- Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä - kesken
+- Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä - tehty
+- Käyttäjä voi muuntaa lasketun tuloksen murtoluvuksi - tehty
 
 ## Jatkokehitysideoita
 
-Jos aikaa riittää, laskimeen voi lisätä esim. seuraavia toiminnallisuuksia: 
-- murtolukujen laskeminen
-- statistiikkaa
+Laskimeen voisi lisätä esim. seuraavia toiminnallisuuksia:: 
+- murtoluvuilla laskeminen
+- tilastotiede
 - kompleksiluvut
 - matriisit

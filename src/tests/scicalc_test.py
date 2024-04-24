@@ -4,6 +4,7 @@ from unittest.mock import patch
 from tkinter import Tk
 from ui import CalcUI
 from scicalc_db import SciCalcDatabase
+import io
 
 class TestSciCalc(unittest.TestCase):
     def setUp(self):
@@ -213,8 +214,17 @@ class TestSciCalc(unittest.TestCase):
         self.assertEqual(equation, '')
 
     def test_undo_redo(self):
+        self.ui._controller.press('\u21b6')
+        self.assertEqual(self.ui._controller.history_index, -1)
+        self.ui._controller.press('\u21b7')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '')
         self.ui._controller.equation.set('10 + 2')
         self.ui._controller.press('=')
+        self.ui._controller.press('\u21b6')
+        equation = self.ui._controller.equation.get()
+        self.assertEqual(equation, '10 + 2')
+        self.ui._controller.press('\u21b7')
         self.ui._controller.equation.set('6 * 6')
         self.ui._controller.press('=')
         self.ui._controller.equation.set('sqrt(4)')
@@ -224,15 +234,84 @@ class TestSciCalc(unittest.TestCase):
         equation = self.ui._controller.equation.get()
         self.assertEqual(equation, '6 * 6')
 
+    def test_memory(self):
+        self.ui._controller.press('MS')
+        self.assertIsNone(self.ui._controller.memory)
+        self.ui._controller.press('MR')
+        self.assertEqual(self.ui._controller.equation.get(), '')
+        self.ui._controller.press('1')
+        self.ui._controller.press('+')
+        self.ui._controller.press('1')
+        self.ui._controller.press('=')
+        self.ui._controller.press('MS')
+        self.assertEqual(self.ui._controller.memory, '2')
+        self.ui._controller.equation.set('')
+        self.ui._controller.press('MR')
+        self.assertEqual(self.ui._controller.memory, '2')
+
 class TestSciCalcDatabase(unittest.TestCase):
     def setUp(self):
         self.connection = sqlite3.connect(':memory:')
         self.database = SciCalcDatabase(db_file=':memory:')
-        self.database.connection = self.connection
 
     def tearDown(self):
         self.connection.close()
 
     def test_connect(self):
         self.database.connect()
-        self.assertIsNotNone(self.database.connection)
+        self.assertIsNotNone(self.database.db)
+
+    def test_connect_exception(self):
+        with patch('sys.stdout', new_callable=io.StringIO) as mock_stdout, patch('sqlite3.connect') as mock_connect:
+            mock_connect.side_effect = sqlite3.Error("Test error")
+            self.database.connect()
+            printed_output = mock_stdout.getvalue().strip()
+            self.assertIn("Error connecting to the database.", printed_output)
+
+    def test_save_history(self):
+        self.database.connect()
+        name = 'test'
+        equation = '1 + 2'
+        result = '3'
+        self.database.save_history(name, equation, result)
+        cursor = self.database.db.cursor()
+        cursor.execute("SELECT * FROM Equations WHERE name=?", (name,))
+        saved_history = cursor.fetchone()
+        self.assertIsNotNone(saved_history)
+        self.assertEqual(saved_history[1], name)
+        self.assertEqual(saved_history[2], equation)
+        self.assertEqual(saved_history[3], result)
+
+    def test_get_saved_names(self):
+        self.database.connect()
+        names = ['test1', 'test2', 'test3']
+        for name in names:
+            self.database.save_history(name, 'equation', 'result')
+        saved_names = self.database.get_saved_names()
+        self.assertEqual(sorted(saved_names), sorted(names))
+
+    def test_load_history(self):
+        self.database.connect()
+        name = 'test'
+        equations = [('sqrt(4)', '2.0'), ('8 * 8', '64')]
+        for equation, result in equations:
+            self.database.save_history(name, equation, result)
+        loaded_history = self.database.load_history(name)
+        self.assertEqual(loaded_history, equations)
+
+    def test_clear_history(self):
+        self.database.connect()
+        self.database.save_history('test', '1 * 4', '4')
+        self.database.clear_history()
+        cursor = self.database.db.cursor()
+        cursor.execute("SELECT COUNT(*) FROM Equations")
+        count = cursor.fetchone()[0]
+        self.assertEqual(count, 0)
+
+    def test_close_connection(self):
+        self.database.close_connection()
+        self.assertIsNone(self.database.db)
+        self.database.connect()
+        self.assertIsNotNone(self.database.db)
+        self.database.close_connection()
+        self.assertIsNone(self.database.db)

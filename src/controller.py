@@ -36,7 +36,7 @@ class SciCalcController:
             button_text (str): The text of the pressed button.
         """
         button_functions = {
-            '=': self._evaluate,
+            '=': self.evaluate,
             'C': self._clear,
             'radians': self._angle_units,
             '\u232b': self._backspace,
@@ -73,17 +73,10 @@ class SciCalcController:
             '\u21b6': lambda: self._undo_redo('undo'),
             '\u21b7': lambda: self._undo_redo('redo'),
             **{str(i): lambda digit=i: self._basic_operations(str(digit)) for i in range(10)},
-            'Save': self.history_db_save,
-            'Load': self.history_db_load,
-            'Clear': self.history_db_clear,
             'MS': lambda: self._memory('MS'),
             'MR': lambda: self._memory('MR')
         }
         button_functions[button_text]()
-
-    def evaluate_expression(self):
-        """Evaluate the current expression."""
-        self._evaluate()
 
     def _handle_error(self, error_message):
         """Handle and show errors.
@@ -132,7 +125,7 @@ class SciCalcController:
         self.history_index = len(self.history) - 1
         self.view.update_history_view(self.history)
 
-    def _evaluate(self):
+    def evaluate(self):
         """Evaluate the current equation and handle errors."""
         equation = self.equation.get().strip()
         if self._check_parentheses(equation):
@@ -376,27 +369,26 @@ class SciCalcController:
             action (str): 'undo' or 'redo'.
         """
         if action == 'undo':
-            if self.history_index >= 0:
+            if 0 <= self.history_index < len(self.history):
                 equation, _ = self.history[self.history_index]
                 self.equation.set(equation)
                 self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
-                self.history_index -= 1
-                self.history_index = max(self.history_index, 0)
-                self.view.update_history_view(self.history)
-        elif action == 'redo':
+                self.history_index = max(self.history_index - 1, -1)
+                self.view.update_history_view(self.history[:self.history_index + 1])
+        else:
             if self.history_index < len(self.history) - 1:
                 self.history_index += 1
                 equation, _ = self.history[self.history_index]
                 self.equation.set(equation)
                 self.view.move_cursor(len(str(equation)) - self.view.get_cursor_position())
+                self.view.update_history_view(self.history[:self.history_index])
             else:
                 self.history_index = len(self.history) - 1
-            self.view.update_history_view(self.history)
-        else:
-            return
+                self.view.update_history_view(self.history)
 
     def _memory(self, button_text):
         """Handle memory-related operations Memory Store and Memory Recall.
+
         Args:
             button_text (str): The text of the pressed button.
         """
@@ -409,6 +401,7 @@ class SciCalcController:
 
     def load_history_from_db(self, name):
         """Load a saved history from the database.
+
         Args:
             name (str): The name of the saved history to load.
         """
@@ -431,11 +424,13 @@ class SciCalcController:
                 self.database.close_connection()
 
     def history_db_load(self):
+        """Load history from the database."""
         saved_names = self.database.get_saved_names()
         if saved_names:
             self.view.create_combobox(saved_names)
 
     def history_db_clear(self):
+        """Clear the database."""
         confirmation = messagebox.askokcancel(
             "Confirmation",
             "Are you sure you want to clear the database?"
