@@ -9,6 +9,7 @@ Sovellus on **funktiolaskin**, jolla voi laskea peruslaskutoimitusten (+, -, * j
 Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 
 ## Dokumentaatio
+- [Käyttöohje](./dokumentaatio/kayttoohje.md)
 - [Vaatimusmäärittely](./dokumentaatio/vaatimusmaarittely.md)
 - [Arkkitehtuurikuvaus](./dokumentaatio/arkkitehtuuri.md)
 - [Työaikakirjanpito](./dokumentaatio/tuntikirjanpito.md)

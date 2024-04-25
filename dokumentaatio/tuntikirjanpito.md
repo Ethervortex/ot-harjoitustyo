@@ -19,4 +19,5 @@
 | 22.4. | 5    | docstringejä, lisää testejä, database-metodien toteutusta |
 | 23.4. | 4    | database operaatiot, muistitoiminnon lisäys laskimeen |
 | 24.4. | 4    | bugien korjausta, lisää testejä |
-| **Yht.** | **73** | |
+| 25.4. | 5    | koodin restrukturointi, dokumentaatio |
+| **Yht.** | **78** | |

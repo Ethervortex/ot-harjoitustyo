@@ -1,5 +1,5 @@
-from scicalc_view import SciCalcView
-from controller import SciCalcController
+from ui.scicalc_view import SciCalcView
+from services.controller import SciCalcController
 
 class CalcUI:
     """

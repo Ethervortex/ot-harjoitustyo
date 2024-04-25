@@ -1,4 +1,4 @@
-from tkinter import ttk, constants, scrolledtext
+from tkinter import ttk, constants, scrolledtext, messagebox, simpledialog
 import tkinter as tk
 
 class SciCalcView:
@@ -256,3 +256,23 @@ class SciCalcView:
         if selected_name:
             popup.destroy()
             self._controller.load_history_from_db(selected_name)
+
+    def show_message(self, message, is_error=True):
+        """Show a message box with an error message or confirmation dialog.
+        Args:
+            message (str): The message to display.
+        """
+        if is_error:
+            messagebox.showerror("Error", message)
+        else:
+            return messagebox.askokcancel("Confirmation", message)
+
+    def get_user_input(self, title, prompt):
+        """Show a dialog to get input from the user.
+        Args:
+            title (str): The title of the input dialog.
+            prompt (str): The prompt message.
+        Returns:
+            str or None: The user input or None if the user clicked Cancel.
+        """
+        return simpledialog.askstring(title, prompt)

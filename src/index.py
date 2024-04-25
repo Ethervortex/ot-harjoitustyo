@@ -1,5 +1,5 @@
 from tkinter import Tk
-from ui import CalcUI
+from ui.ui import CalcUI
 
 def main():
     """

@@ -1,4 +1,5 @@
 import sqlite3
+from config import DATABASE_FILE_PATH
 
 class SciCalcDatabase:
     """
@@ -8,7 +9,7 @@ class SciCalcDatabase:
         db_file (str): The name of the SQLite database file.
         db (sqlite3.Connection): The connection to the SQLite database.
     """
-    def __init__(self, db_file='calculator.db'):
+    def __init__(self, view, db_file=DATABASE_FILE_PATH):
         """Initialize the SciCalcDatabase.
 
         Args:
@@ -16,6 +17,7 @@ class SciCalcDatabase:
         """
         self.db_file = db_file
         self.db = None
+        self.view = view
 
     def connect(self):
         """Establish a connection to the SQLite database."""
@@ -24,6 +26,7 @@ class SciCalcDatabase:
             self._create_table()
         except sqlite3.Error:
             print("Error connecting to the database.")
+            self.view.show_message("Error connecting to the database.")
 
     def _create_table(self):
         """Create the 'Equations' table if it doesn't exist."""
@@ -38,7 +41,7 @@ class SciCalcDatabase:
                     )
                 ''')
         except sqlite3.Error:
-            print("Error creating the table.")
+            self.view.show_message("Error creating the table.")
 
     def save_history(self, name, equation, result):
         """
@@ -55,7 +58,7 @@ class SciCalcDatabase:
                     (name, equation, result)
                 )
         except sqlite3.Error:
-            print("Error saving equation to the database.")
+            self.view.show_message("Error saving equations to the database.")
 
     def get_saved_names(self):
         """
@@ -72,7 +75,7 @@ class SciCalcDatabase:
                 cursor.execute('SELECT DISTINCT name FROM Equations')
                 return [row[0] for row in cursor.fetchall()]
         except sqlite3.Error:
-            print("Error saving equation to the database.")
+            self.view.show_message("Error getting saved names.")
             return []
 
     def load_history(self, name):
@@ -93,7 +96,7 @@ class SciCalcDatabase:
                 print("History loaded")
                 return cursor.fetchall()
         except sqlite3.Error:
-            print("Error loading equations from the database.")
+            self.view.show_message("Error loading equations from the database.")
             return []
 
     def clear_history(self):
@@ -103,7 +106,7 @@ class SciCalcDatabase:
                 self.db.execute('DELETE FROM Equations')
                 print("Database cleared.")
         except sqlite3.Error:
-            print("Error clearing history in the database.")
+            self.view.show_message("Error clearing the database.")
 
     def close_connection(self):
         """Close the connection to the SQLite database."""

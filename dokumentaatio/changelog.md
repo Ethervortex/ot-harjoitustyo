@@ -36,4 +36,5 @@
 - Laskuhistorian lataus nimellä tietokannasta
 - Tietokannan tyhjennysmahdollisuus lisätty
 - Muistitoimintojen lisäys laskimeen
-- Dokumentaatio
+- Luokat omiin hakemistoihinsa
+- Dokumentaatio aloitettu

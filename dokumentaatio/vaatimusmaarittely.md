@@ -10,9 +10,13 @@ Sovellukseen ei tarvitse kirjautua, kaikki sovelluksen käyttäjät ovat normaal
 
 ## Käyttöliittymäluonnos
 
-Sovellus tarjoaa seuraavan tyyppisen näkymän laskutoimitusten suorittamiseen
+Sovellus tarjoaa seuraavantyyppisen näkymän laskutoimitusten suorittamiseen
 
 <img src="./kuvat/kayttoliittyma-luonnos.png" alt="GUI" width="500px">
+
+## Valmis käyttöliittymä
+
+xxxx
 
 ## Sovelluksen tarjoama toiminnallisuus
 

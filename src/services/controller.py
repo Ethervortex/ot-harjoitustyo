@@ -1,10 +1,10 @@
-from tkinter import StringVar, messagebox, simpledialog
+from tkinter import StringVar
 from math import (
     log10, log, sqrt, pi, exp, factorial, floor, sin, cos, tan,
     asin, acos, atan, radians, degrees
 )
 from fractions import Fraction
-from scicalc_db import SciCalcDatabase
+from repositories.scicalc_db import SciCalcDatabase
 
 class SciCalcController:
     """
@@ -26,7 +26,7 @@ class SciCalcController:
         self.radians = True
         self.history = []
         self.history_index = -1
-        self.database = SciCalcDatabase()
+        self.database = SciCalcDatabase(self.view)
         self.memory = None
 
     def press(self, button_text):
@@ -89,14 +89,6 @@ class SciCalcController:
         self.view.move_cursor(len(str(error_message)) - self.view.get_cursor_position())
         self.view.update_button_state()
 
-    def show_message(self, message):
-        """Show a message box with an error message.
-
-        Args:
-            message (str): The message to display.
-        """
-        messagebox.showerror("Error", message)
-
     def _check_parentheses(self, equation):
         """Check for unmatched parentheses in the equation.
 
@@ -129,10 +121,10 @@ class SciCalcController:
         """Evaluate the current equation and handle errors."""
         equation = self.equation.get().strip()
         if self._check_parentheses(equation):
-            self.show_message("Unmatched parentheses")
+            self.view.show_message("Unmatched parentheses")
             return
         if not equation:
-            self.show_message("No expression to evaluate")
+            self.view.show_message("No expression to evaluate")
             return
         try:
             result = self._safe_eval(self.equation.get())
@@ -416,7 +408,9 @@ class SciCalcController:
     def history_db_save(self):
         """Save the current history to the database."""
         if self.history:
-            name = simpledialog.askstring("Save History", "Enter a name for the saved history:")
+            name = self.view.get_user_input(
+                "Save History", "Enter a name for the saved history:"
+            )
             if name:
                 self.database.connect()
                 for equation, result in self.history:
@@ -431,10 +425,9 @@ class SciCalcController:
 
     def history_db_clear(self):
         """Clear the database."""
-        confirmation = messagebox.askokcancel(
-            "Confirmation",
-            "Are you sure you want to clear the database?"
-            )
+        confirmation = self.view.show_message(
+            "Are you sure you want to clear the database?", False
+        )
         if confirmation:
             self.database.connect()
             self.database.clear_history()
