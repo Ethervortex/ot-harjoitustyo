@@ -1,6 +1,6 @@
 # Käyttöohje
 
-Lataa laskimen viimeisimmän [releasen]((https://github.com/Ethervortex/ot-harjoitustyo/releases/tag/viikko5)) lähdekoodi
+Lataa laskimen viimeisimmän [releasen]((https://github.com/Ethervortex/ot-harjoitustyo/releases/tag/viikko6)) lähdekoodi
 
 ## Konfigurointi
 

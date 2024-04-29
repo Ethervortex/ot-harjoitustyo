@@ -12,11 +12,13 @@ Sovellukseen ei tarvitse kirjautua, kaikki sovelluksen käyttäjät ovat normaal
 
 Sovellus tarjoaa seuraavantyyppisen näkymän laskutoimitusten suorittamiseen
 
-<img src="./kuvat/kayttoliittyma-luonnos.png" alt="GUI" width="500px">
+<img src="./kuvat/kayttoliittyma-luonnos.png" alt="GUI-luonnos" width="500px">
 
 ## Valmis käyttöliittymä
 
-xxxx
+Sovelluksen toteutettu käyttöliittymä on seuraava:
+
+<img src="./kuvat/kayttoliittyma.png" alt="GUI" width="500px">
 
 ## Sovelluksen tarjoama toiminnallisuus
 
