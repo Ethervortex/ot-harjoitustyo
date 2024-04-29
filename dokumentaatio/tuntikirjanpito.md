@@ -20,4 +20,5 @@
 | 23.4. | 4    | database operaatiot, muistitoiminnon lisäys laskimeen |
 | 24.4. | 4    | bugien korjausta, lisää testejä |
 | 25.4. | 5    | koodin restrukturointi, dokumentaatio |
-| **Yht.** | **78** | |
+| 29.4. | 3    | build, testejä, dokumentaatiota |
+| **Yht.** | **81** | |

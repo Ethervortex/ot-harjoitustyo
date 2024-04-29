@@ -5,8 +5,11 @@ from tkinter import Tk
 from ui.ui import CalcUI
 from repositories.scicalc_db import SciCalcDatabase
 import io
+from build import build
+from config import DATABASE_FILE_PATH
+import os
 
-class TestSciCalc(unittest.TestCase):
+class TestSciCalcController(unittest.TestCase):
     def setUp(self):
         self.window = Tk()
         self.ui = CalcUI(self.window)
@@ -315,3 +318,23 @@ class TestSciCalcDatabase(unittest.TestCase):
         self.assertIsNotNone(self.database.db)
         self.database.close_connection()
         self.assertIsNone(self.database.db)
+
+class TestBuild(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        if os.path.exists(DATABASE_FILE_PATH):
+            connection = sqlite3.connect(DATABASE_FILE_PATH)
+            connection.close()
+            build.db = None
+
+    def test_build_script(self):
+        build()
+        self.assertTrue(os.path.exists(DATABASE_FILE_PATH))
+        connection = sqlite3.connect(DATABASE_FILE_PATH)
+        cursor = connection.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Equations';")
+        table = cursor.fetchone()
+        connection.close()
+        self.assertIsNotNone(table)

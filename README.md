@@ -12,6 +12,7 @@ Laskin on toteutettu ja testattu Python-versiolla `3.10`.
 - [Käyttöohje](./dokumentaatio/kayttoohje.md)
 - [Vaatimusmäärittely](./dokumentaatio/vaatimusmaarittely.md)
 - [Arkkitehtuurikuvaus](./dokumentaatio/arkkitehtuuri.md)
+- [Testausdokumentti](./dokumentaatio/testaus.md)
 - [Työaikakirjanpito](./dokumentaatio/tuntikirjanpito.md)
 - [Changelog](./dokumentaatio/changelog.md)
 
@@ -25,6 +26,12 @@ Asenna riippuvuudet komennolla:
 
 ```bash
 poetry install
+```
+
+Sen jälkeen alusta tietokanta komennolla:
+
+```bash
+poetry run invoke build
 ```
 
 ## Ohjelman suorittaminen

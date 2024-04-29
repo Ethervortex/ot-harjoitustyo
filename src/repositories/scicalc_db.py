@@ -23,12 +23,13 @@ class SciCalcDatabase:
         """Establish a connection to the SQLite database."""
         try:
             self.db = sqlite3.connect(self.db_file)
-            self._create_table()
+            self.create_table()
         except sqlite3.Error:
-            print("Error connecting to the database.")
-            self.view.show_message("Error connecting to the database.")
+            message = "Error connecting to the database."
+            print(message)
+            self.view.show_message(message)
 
-    def _create_table(self):
+    def create_table(self):
         """Create the 'Equations' table if it doesn't exist."""
         try:
             with self.db:
@@ -41,7 +42,9 @@ class SciCalcDatabase:
                     )
                 ''')
         except sqlite3.Error:
-            self.view.show_message("Error creating the table.")
+            message = "Error creating the table."
+            print(message)
+            self.view.show_message(message)
 
     def save_history(self, name, equation, result):
         """
@@ -57,6 +60,7 @@ class SciCalcDatabase:
                     'INSERT INTO Equations (name, equation, result) VALUES (?, ?, ?)',
                     (name, equation, result)
                 )
+                self.db.commit()
         except sqlite3.Error:
             self.view.show_message("Error saving equations to the database.")
 
@@ -104,12 +108,12 @@ class SciCalcDatabase:
         try:
             with self.db:
                 self.db.execute('DELETE FROM Equations')
+                self.db.commit()
                 print("Database cleared.")
         except sqlite3.Error:
             self.view.show_message("Error clearing the database.")
 
     def close_connection(self):
         """Close the connection to the SQLite database."""
-        if self.db is not None:
-            self.db.close()
-            self.db = None
+        self.db.close()
+        self.db = None

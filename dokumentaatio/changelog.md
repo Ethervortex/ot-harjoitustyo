@@ -38,3 +38,9 @@
 - Muistitoimintojen lisäys laskimeen
 - Luokat omiin hakemistoihinsa
 - Dokumentaatio aloitettu
+
+## Viikko 7
+- Build
+- Testausdokumentti kuntoon
+- Dokumentoinnin viimeistely (kesken)
+- Käyttöliittymä hienommaksi (ehkä)
