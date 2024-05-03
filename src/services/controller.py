@@ -141,6 +141,8 @@ class SciCalcController:
             self._handle_error("Argument error")
         except ValueError:
             self._handle_error("Value error")
+        except (TypeError, OverflowError, TimeoutError):
+            self._handle_error("Error during evaluation.")
 
     def _safe_eval(self, equation):
         """Define safe functions and safely evaluate the mathematical expression.

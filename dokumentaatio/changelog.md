@@ -41,6 +41,6 @@
 
 ## Viikko 7
 - Build
-- Testausdokumentti kuntoon
-- Dokumentoinnin viimeistely (kesken)
+- Testausdokumentti
+- Dokumentoinnin viimeistely
 - Käyttöliittymä hienommaksi (ehkä)

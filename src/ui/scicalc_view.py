@@ -91,13 +91,17 @@ class SciCalcView:
         Args:
             history (List[[str, str]]): List of tuples representing equations and their results.
         """
-        self._history.configure(state='normal')
-        self._history.delete(1.0, tk.END)
-        for i, item in enumerate(history):
-            equation_text = f"[{i + 1}]\t{item[0]} = {item[1]}\n"
-            self._history.insert(tk.END, equation_text)
-        self._history.yview(tk.END)
-        self._history.configure(state='disabled')
+        try:
+            self._history.configure(state='normal')
+            self._history.delete(1.0, tk.END)
+            for i, item in enumerate(history):
+                equation_text = f"[{i + 1}]\t{item[0]} = {item[1]}\n"
+                self._history.insert(tk.END, equation_text)
+            self._history.yview(tk.END)
+            self._history.configure(state='disabled')
+        except ValueError:
+            self._history.delete(1.0, tk.END)
+            self._controller.history = []
 
     def _add_styles(self):
         """Adds styles to the ttk.Style for consistent appearance."""
@@ -105,22 +109,22 @@ class SciCalcView:
         style.theme_use('alt')
         style.configure("MainFrame.TFrame", background='lightgrey')
         style.configure("Padded.TEntry", padding=(10, 5))
-        style.configure("Angle.TButton", font=('Segoe UI', 15, 'bold'), padding=(0, 3))
+        style.configure("Angle.TButton", font=('Calibri', 15, 'bold'), padding=(0, 3))
         style.map("Angle.TButton",
             background=[('pressed', 'lightyellow'), ('!pressed', 'darkgrey')])
-        style.configure("Calc.TButton", font=('Segoe UI', 15, 'bold'), background='lightgrey')
-        style.configure("Number.TButton", font=('Segoe UI', 16, 'bold'), background='darkgrey')
+        style.configure("Calc.TButton", font=('Calibri', 15, 'bold'), background='lightgrey')
+        style.configure("Number.TButton", font=('Calibri', 16, 'bold'), background='darkgrey')
         style.configure("BasicOperation.TButton",
-                        font=('Segoe UI', 16, 'bold'), background='lightgreen')
-        style.configure("Equal.TButton", font=('Segoe UI', 16, 'bold'), background='#606060')
-        style.configure("Clear.TButton", font=('Segoe UI', 15, 'bold'), background='red')
-        style.configure("Backspace.TButton", font=('Segoe UI', 15, 'bold'), background='orange')
-        style.configure("Disable.TButton", font=('Segoe UI', 15, 'bold'), background='lightgray')
+                        font=('Calibri', 16, 'bold'), background='lightgreen')
+        style.configure("Equal.TButton", font=('Calibri', 16, 'bold'), background='#606060')
+        style.configure("Clear.TButton", font=('Calibri', 15, 'bold'), background='red')
+        style.configure("Backspace.TButton", font=('Calibri', 15, 'bold'), background='orange')
+        style.configure("Disable.TButton", font=('Calibri', 15, 'bold'), background='lightgray')
         style.map("Disable.TButton",
             foreground=[('disabled', 'grey'), ('!disabled', 'black')],
             background=[('active', 'white'), ('disabled', 'lightgrey'), ('!disabled', 'darkgrey')])
-        style.configure("History.TButton", font=('Arial', 14), background='darkgrey')
-        style.configure("Popup.TButton", font=('Arial', 14), background='lightgreen')
+        style.configure("History.TButton", font=('Calibri', 14), background='darkgrey')
+        style.configure("Popup.TButton", font=('Calibri', 14), background='lightgreen')
 
     def _add_widgets(self):
         """Initializes the widgets of the GUI, including labels, history view and entry field."""
@@ -166,7 +170,7 @@ class SciCalcView:
                 self._frame,
                 text=button_text,
                 style=button_style,
-                width=5,
+                width=1,
                 command=lambda text=button_text: self._button_press(text)
             )
             self._buttons_widgets.append(button)

@@ -21,4 +21,5 @@
 | 24.4. | 4    | bugien korjausta, lisää testejä |
 | 25.4. | 5    | koodin restrukturointi, dokumentaatio |
 | 29.4. | 3    | build, testejä, dokumentaatiota |
-| **Yht.** | **81** | |
+| 3.5.  | 2    | testien restrukturointi, pikkufiksejä |
+| **Yht.** | **83** | |
