@@ -30,6 +30,7 @@ Sovelluksen toteutettu käyttöliittymä on seuraava:
 - Käyttäjä voi valita lasketaanko trigonometriset funktiot radiaaneina vai asteina - tehty
 - Suoritetut laskut kertyvät yläosassa olevalle näyttöalueelle - tehty
 - Laskutoimitushistorian voi tallentaa tietokantaan ja ladata sieltä - tehty
+- Laskutoimitushistorioita voi poistaa tietokannasta - tehty
 - Käyttäjä voi muuntaa lasketun tuloksen murtoluvuksi - tehty
 
 ## Jatkokehitysideoita

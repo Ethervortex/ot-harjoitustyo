@@ -67,7 +67,8 @@ ja käytetään trigonometrisia funktioita.
 - Virheen sattuessa tarkista syöte ja yritä uudelleen
 
 8. Tietokanta
-- Laskuhistorian voi ladata ja tallentaa `Database`-valikosta
+- Laskuhistorian voi ladata, tallentaa ja poistaa `Database`-valikosta
 - Tallennettaessa valitaan `Save history` ja annetaan tallennettavalle historialle nimi
 - Ladattaessa valitaan `Load history` ja valitaan haluttu historia listasta
+- Historiatietoja poistettaessa valitaan `Delete history` ja valitaan poistettavat tiedot listasta
 - Tietokannan sisällön voi poistaa valitsemalla valikosta `Clear database`

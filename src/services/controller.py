@@ -407,6 +407,24 @@ class SciCalcController:
             self.view.update_history_view(self.history)
             self.database.close_connection()
 
+    def delete_history_from_db(self, name):
+        """Delete a saved history from the database.
+
+        Args:
+            name (str): The name of the saved history to delete.
+        """
+        if name:
+            confirmation = self.view.show_message(
+                f"Are you sure you want to delete '{name}'?", message_type='confirm'
+            )
+            if confirmation:
+                self.database.connect()
+                self.database.delete_by_name(name)
+                self.database.close_connection()
+                self.view.show_message(
+                    f"History '{name}' deleted successfully.", message_type='info'
+                )
+
     def history_db_save(self):
         """Save the current history to the database."""
         if self.history:
@@ -418,6 +436,9 @@ class SciCalcController:
                 for equation, result in self.history:
                     self.database.save_history(name, equation, result)
                 self.database.close_connection()
+                self.view.show_message(
+                    f"History '{name}' saved successfully.", message_type='info'
+                )
 
     def history_db_load(self):
         """Load history from the database."""
@@ -428,12 +449,15 @@ class SciCalcController:
     def history_db_clear(self):
         """Clear the database."""
         confirmation = self.view.show_message(
-            "Are you sure you want to clear the database?", False
+            "Are you sure you want to clear the database?", message_type='confirm'
         )
         if confirmation:
             self.database.connect()
             self.database.clear_history()
             self.database.close_connection()
+            self.view.show_message(
+                f"Database cleared.", message_type='info'
+            )
             self.history = []
             self.history_index = -1
             self.view.update_history_view(self.history)

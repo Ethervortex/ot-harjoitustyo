@@ -55,6 +55,17 @@ class TestSciCalcDatabase(unittest.TestCase):
         loaded_history = self.database.load_history(name)
         self.assertEqual(loaded_history, equations)
 
+    def test_delete_by_name(self):
+        name = 'test'
+        equation = '1 + 2'
+        result = '3'
+        self.database.save_history(name, equation, result)
+        self.database.delete_by_name(name)
+        cursor = self.database.db.cursor()
+        cursor.execute("SELECT * FROM Equations WHERE name=?", (name,))
+        deleted_history = cursor.fetchone()
+        self.assertIsNone(deleted_history)
+
     def test_clear_history(self):
         self.database.save_history('test', '1 * 4', '4')
         self.database.clear_history()

@@ -43,4 +43,5 @@
 - Build
 - Testausdokumentti
 - Dokumentoinnin viimeistely
-- Käyttöliittymä hienommaksi (ehkä)
+- Tietokannan virhetilanteista virheikkuna käyttäjälle
+- Historian poisto nimellä lisätty

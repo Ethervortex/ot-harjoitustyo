@@ -185,7 +185,15 @@ class SciCalcView:
         )
         self._database_menu.add_command(
             label="Load history",
-            command=self._controller.history_db_load
+            command=lambda: self.create_combobox(
+                self._controller.database.get_saved_names(), 'load'
+            )
+        )
+        self._database_menu.add_command(
+            label="Delete history",
+            command=lambda: self.create_combobox(
+                self._controller.database.get_saved_names(), 'delete'
+            )
         )
         self._database_menu.add_command(
             label="Clear database",
@@ -229,25 +237,43 @@ class SciCalcView:
         self._controller.press(button_text)
         self._entry_field.focus_set()
 
-    def create_combobox(self, saved_names):
+    def create_combobox(self, saved_names, action):
         """Creates a popup with a combobox for selecting a history entry.
 
         Args:
             saved_names (list): A list of saved history names.
+            action (str): The action to perform ('load' or 'delete').
         """
         popup = tk.Toplevel(self._root)
-        popup.title("Load History")
+        popup.title(f"{action.capitalize()} History")
         label = ttk.Label(popup, text="Select a history from the list:",
                           font=('Arial', 14), background='lightgrey')
         label.pack(padx=10, pady=10)
         combobox = ttk.Combobox(popup, state="readonly", values=saved_names, font=('Arial', 14))
         combobox.pack(padx=10, pady=10)
+        button_text = "Load" if action == 'load' else "Delete"
         button = ttk.Button(
-            popup, text="Load",
-            command=lambda: self._load_from_combobox(combobox, popup),
+            popup, text=button_text,
+            command=lambda: self._perform_action(combobox, popup, action),
             style="Popup.TButton"
         )
         button.pack(pady=10)
+
+    def _perform_action(self, combobox, popup, action):
+        """Performs the selected action (load or delete) for the chosen history.
+
+        Args:
+            combobox (ttk.Combobox): The combobox widget containing saved history names.
+            popup (tk.Toplevel): The popup window containing the combobox.
+            action (str): The action to perform ('load' or 'delete').
+        """
+        selected_name = combobox.get()
+        if selected_name:
+            popup.destroy()
+            if action == 'load':
+                self._controller.load_history_from_db(selected_name)
+            elif action == 'delete':
+                self._controller.delete_history_from_db(selected_name)
 
     def _load_from_combobox(self, combobox, popup):
         """Loads the selected history from the combobox.
@@ -261,18 +287,23 @@ class SciCalcView:
             popup.destroy()
             self._controller.load_history_from_db(selected_name)
 
-    def show_message(self, message, is_error=True):
+    def show_message(self, message, message_type='error'):
         """Show a message box with an error message or confirmation dialog.
+
         Args:
             message (str): The message to display.
+            message_type (str): The type of message ('error', 'confirm', or 'info').
         """
-        if is_error:
+        if message_type == 'error':
             messagebox.showerror("Error", message)
-        else:
+        elif message_type == 'confirm':
             return messagebox.askokcancel("Confirmation", message)
+        elif message_type == 'info':
+            messagebox.showinfo("Information", message)
 
     def get_user_input(self, title, prompt):
         """Show a dialog to get input from the user.
+
         Args:
             title (str): The title of the input dialog.
             prompt (str): The prompt message.

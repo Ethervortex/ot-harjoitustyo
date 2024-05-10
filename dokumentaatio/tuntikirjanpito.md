@@ -22,4 +22,5 @@
 | 25.4. | 5    | koodin restrukturointi, dokumentaatio |
 | 29.4. | 3    | build, testejä, dokumentaatiota |
 | 3.5.  | 2    | testien restrukturointi, pikkufiksejä |
-| **Yht.** | **83** | |
+| 10.5. | 2    | historian poisto nimellä tietokannasta |
+| **Yht.** | **85** | |

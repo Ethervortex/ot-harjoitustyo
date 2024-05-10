@@ -103,6 +103,23 @@ class SciCalcDatabase:
             self.view.show_message("Error loading equations from the database.")
             return []
 
+    def delete_by_name(self, name):
+            """
+            Delete history entries from the 'Equations' table based on the provided name.
+            
+            Args:
+                name (str): The name associated with the history entry to be deleted.
+            """
+            try:
+                with self.db:
+                    self.db.execute(
+                        'DELETE FROM Equations WHERE name = ?',
+                        (name,)
+                    )
+                    self.db.commit()
+            except sqlite3.Error:
+                self.view.show_message("Error deleting history from the database.")
+
     def clear_history(self):
         """Clear all records from the 'Equations' table."""
         try:

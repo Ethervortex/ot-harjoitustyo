@@ -12,11 +12,11 @@ Suurimmalle osalle metodeista on kirjoitettu testit - lähinnä `SciCalcDatabase
 
 ### Repositorio-luokka
 
-Repositorio-luokka `SciCalcDatabase`-luokka testataan TestSciCalcDatabase-testiluokalla. Testiluokassa alustetaan SQLite-tietokanta in-memory -tilassa eli tietokanta on vain väliaikainen ja asetetaan jokaisen testin alussa. Testien alustuksessa luodaan `SciCalcDatabase`-instanssi ja kytketään se tietokantaan. Testiluokassa testataan `SciCalcDatabase`-luokan toimintaa eri skenaarioissa. Testien ulkopuolelle jäävät lähinnä poikkeuksia aiheuttavat tilanteet.
+Repositorio-luokka `SciCalcDatabase` testataan TestSciCalcDatabase-testiluokalla. Testiluokassa alustetaan SQLite-tietokanta in-memory -tilassa eli tietokanta on vain väliaikainen ja asetetaan jokaisen testin alussa. Testien alustuksessa luodaan `SciCalcDatabase`-instanssi ja kytketään se tietokantaan. Testiluokassa testataan `SciCalcDatabase`-luokan toimintaa eri skenaarioissa. Testien ulkopuolelle jäävät lähinnä poikkeuksia aiheuttavat tilanteet.
 
 ### Testauskattavuus
 
-Käyttöliittymäkerrosta lukuunottamatta sovelluksen testauksen haarautumakattavuus on 86%. Testaamatta jää muutama `SciCalcDatabase`-luokan kanssa yhteydessä oleva metodi `SciCalcController`-luokasta sekä `SciCalcDatabase`-luokan muutamat poikkeuksia aiheuttavat tilanteet.
+Käyttöliittymäkerrosta lukuunottamatta sovelluksen testauksen haarautumakattavuus on 83%. Testaamatta jää muutama `SciCalcDatabase`-luokan kanssa yhteydessä oleva metodi `SciCalcController`-luokasta sekä `SciCalcDatabase`-luokan muutamat poikkeuksia aiheuttavat tilanteet.
 
 ![](./kuvat/testikattavuus.png)
 
