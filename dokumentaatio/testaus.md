@@ -36,4 +36,4 @@ Kaikki [määrittelydokumentin](./vaatimusmaarittely.md) ja käyttöohjeen lista
 
 ## Sovellukseen jääneet laatuongelmat
 
-Kun käyttäjä on valinnut kulmayksiköksi asteet ja laskee trigonometrisia funktioita, syötekenttään lisättävät ylimääräiset aste/radiaanimuunnokset eivät ole kovin käyttäjäystävällisiä. Käyttäjä joutuu mm. sulkemaan funktion kahdella sululla. Tämän korjaus olisi melko työläs operaatio, koska syötekentässä pitäisi näyttää eri yhtälö kuin itse ratkaistava funktio.
+Kun käyttäjä on valinnut kulmayksiköksi asteet ja laskee trigonometrisia funktioita, syötekenttään lisättävät ylimääräiset aste/radiaanimuunnokset eivät ole kovin käyttäjäystävällisiä. Käyttäjä joutuu mm. sulkemaan funktion kahdella sululla ja kaava saattaa näyttää sekavalta. Tämän korjaus olisi melko työläs operaatio, koska syötekentässä pitäisi näyttää eri yhtälö kuin itse ratkaistava funktio.

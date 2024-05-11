@@ -456,7 +456,7 @@ class SciCalcController:
             self.database.clear_history()
             self.database.close_connection()
             self.view.show_message(
-                f"Database cleared.", message_type='info'
+                "Database cleared.", message_type='info'
             )
             self.history = []
             self.history_index = -1

@@ -23,4 +23,5 @@
 | 29.4. | 3    | build, testejä, dokumentaatiota |
 | 3.5.  | 2    | testien restrukturointi, pikkufiksejä |
 | 10.5. | 2    | historian poisto nimellä tietokannasta |
-| **Yht.** | **85** | |
+| 11.5. | 1    | viimeiset testaukset, loppupalautus |
+| **Yht.** | **86** | |
